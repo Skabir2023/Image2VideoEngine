@@ -1,33 +1,51 @@
 # Plates — 1954 Mercedes-Benz 300SL Gullwing
 
-Six stills, fixed order, drawn free by the kit's own engine (Meta AI through Browser
-MCP, 0 credits). Every prompt repeats the identity block so the six renders stay the
-same car.
+Twelve stills, generated free through **Meta AI in the signed-in Chrome** (Browser MCP,
+0 credits). Every prompt repeats the identity block verbatim so the twelve read as one car
+in one studio. The first pass of this film used grey gradient placeholders — they sit in
+`qa/placeholder-stills/` and were never a real plate.
 
 ## Car identity block
-1954 Mercedes-Benz 300SL Gullwing coupe, silver paint, gullwing doors, chrome grille, round headlights, red leather interior, chrome hubcap wheels, 300SL badges.
+1954 Mercedes-Benz 300SL Gullwing coupe, silver paint, chrome grille with three-pointed
+star, round headlights, chrome bumpers, red leather interior, chrome hubcap wheels
 
-## The six prompts
-### front 3/4
-1954 Mercedes-Benz 300SL Gullwing coupe, silver paint, gullwing doors, chrome grille, round headlights, red leather interior, chrome hubcap wheels, 300SL badges. Front three-quarter, doors closed, car show, daylight.
+## The twelve plates
+Every prompt opens with `Create one photorealistic photograph, vertical portrait 9:16: `
++ the identity block, and closes with `empty concrete studio, golden hour light, 35mm,
+no people, no animals, no text, no watermark`.
 
-### side
-1954 Mercedes-Benz 300SL Gullwing coupe, silver paint, gullwing doors, chrome grille, round headlights, red leather interior, chrome hubcap wheels, 300SL badges. Side profile, doors open, empty road, daylight.
+| # | File | Framing clause | Used in |
+| --- | --- | --- | --- |
+| 1 | `01_hero_front34.png` | Front three-quarter, gullwing doors closed | s01 |
+| 2 | `02_side.png` | Side profile, one gullwing door open straight up, full car in frame | s02 |
+| 3 | `03_rear.png` | Rear three-quarter, rounded tail, chrome bumper, twin exhaust pipes | s09 |
+| 4 | `04_engine.png` | Bonnet lifted, engine bay filling the frame: overhead-cam inline six, intake manifold, chrome cam cover | s06 |
+| 5 | `05_interior.png` | Interior through the open door: red leather buckets, body-colour dash, thin-rimmed wheel, chrome trim | s11 |
+| 6 | `06_wheel.png` | Tight front wheel close-up: steel disc, chrome hubcap, black tyre | s04 |
+| 7 | `07_headlight.png` | Extreme close-up of one round headlight: chrome bezel, glass lens, silver fender curve | s03 |
+| 8 | `08_star.png` | Extreme close-up of the three-pointed star on the grille, polished bars | s05 |
+| 9 | `09_engine_detail.png` | Tight engine detail: polished intake manifold and injector lines, chrome cam cover | s07 |
+| 10 | `10_exhaust.png` | Rear lower body close-up: chrome bumper, twin exhaust tips, tail light lens | s08 |
+| 11 | `11_gauges.png` | Dashboard gauge cluster: round dials, cream numerals, chrome rings, red leather | s10 |
+| 12 | `12_steering.png` | Thin-rimmed ivory steering wheel and horn ring, red dash behind | s12 |
 
-### rear
-1954 Mercedes-Benz 300SL Gullwing coupe, silver paint, gullwing doors, chrome grille, round headlights, red leather interior, chrome hubcap wheels, 300SL badges. Rear three-quarter, car show, daylight.
+Each `.images.json` next to the plate records engine, full prompt, size and time.
 
-### engine bay
-1954 Mercedes-Benz 300SL Gullwing coupe, silver paint, gullwing doors, chrome grille, round headlights, red leather interior, chrome hubcap wheels, 300SL badges. Engine bay, inline six, car show, daylight.
+## How they were pulled
+Meta AI returns 1152×2048 WebP (exactly 9:16). Each was downloaded from the page with
+Browser MCP's `download`, then scaled once to 1080×1920 with lanczos — no crop, and no
+re-encode beyond the single scale.
 
-### interior
-1954 Mercedes-Benz 300SL Gullwing coupe, silver paint, gullwing doors, chrome grille, round headlights, red leather interior, chrome hubcap wheels, 300SL badges. Interior, red leather, dashboard, car show, daylight.
+One chat per shot. The same chat was tried first, but Meta AI's message list only keeps
+recent messages in the DOM, so "the newest image on the page" kept resolving to the hero
+plate and three downloads came back byte-identical. A fresh chat per shot gives exactly
+one generated image per page, so the download is unambiguous. Consistency is carried by
+the identity block, not by chat context.
 
-### wheel
-1954 Mercedes-Benz 300SL Gullwing coupe, silver paint, gullwing doors, chrome grille, round headlights, red leather interior, chrome hubcap wheels, 300SL badges. Close wheel detail, car show, daylight.
-
-## Rules for the shoot
-- Vertical, 1080×1920. No people, no text, no logos, no watermark.
-- If a render drifts from the first plate, say so in one line and re-shoot it:
-  "Image 2 and 3 do not match Image 1 — same car, same colour, same wheels."
-- Engine bay and interior must match this exact year and model.
+## Checks
+- No people, no animals, no text overlay, no watermark in any of the twelve.
+- Same silver paint, same chrome hubcap wheels, same red leather, same studio and light
+  across all twelve; nothing was cropped out of a 16:9 frame.
+- Engine bay and interior are the correct 300SL M198 layout.
+- Camera framing runs wide → macro → wide across the film, so consecutive shots never
+  repeat the same distance.

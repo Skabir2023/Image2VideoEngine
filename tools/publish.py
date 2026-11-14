@@ -35,9 +35,11 @@ Examples:
 
     python3 tools/publish.py pick video-projects/vintage-motor-house
     python3 tools/publish.py queue video-projects/vintage-motor-house/1969-ford-mustang-boss-429 \
-        --title "1969 Ford Mustang Boss 429 - The Rarest One" \
-        --description "They only built 1,359 of these. And it was a NASCAR engine with plates." \
-        --hashtags "#Mustang #ClassicCars #Boss429 #1969" \
+        --title "The Rarest 1969 Ford Mustang Boss 429 Ever Made" \
+        --description "Ford built just 1,359 of them, and every one carried a NASCAR engine with \
+plates. The 429 was so wide that Ford had to rework the shock towers by hand. Today a good one \
+costs more than a house. Would you take it over a Hemi Cuda?" \
+        --hashtags "#Ford #Mustang #ClassicCars #Boss429 #1969" \
         --car "1969 Ford Mustang Boss 429" --angle "Price / Rarity"
 
     python3 tools/publish.py schedule video-projects/vintage-motor-house/1969-ford-mustang-boss-429 --dry-run
@@ -69,6 +71,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import brightbean  # noqa: E402
+import caption as caption_rules  # noqa: E402
 from excel import Workbook  # noqa: E402
 
 ENGINE = Path(__file__).resolve().parents[1]
@@ -307,7 +310,8 @@ class Project:
 
 # -- queue ---------------------------------------------------------------
 def queue(project: Project, video=None, title="", description="", hashtags="",
-          car="", angle="", caption_file=None) -> dict:
+          car="", angle="", caption_file=None, caption_score=None,
+          force=False) -> dict:
     project.ensure()
     if caption_file:
         blocks = [b.strip() for b in Path(caption_file).read_text(encoding="utf-8").split("\n\n") if b.strip()]
@@ -322,6 +326,16 @@ def queue(project: Project, video=None, title="", description="", hashtags="",
     if not title:
         raise SystemExit("Need --title (or a caption file whose first block is the title).")
     caption = "\n\n".join(part for part in (title, description, hashtags) if part)
+
+    # The caption contract, checked before a row exists. The brain scores the
+    # caption (META PROMPT.md); this enforces the counts, the bans, the naming
+    # rule and the 80 floor, so a thin caption cannot reach the page. --force
+    # queues anyway, and says so in the row's `error` column.
+    report = caption_rules.report_for(title, description, hashtags,
+                                      caption_score, car)
+    print(report.render())
+    if not report.passed and not force:
+        raise SystemExit("Caption did not pass: rewrite it, or queue with --force.")
 
     source = Path(video) if video else project.render()
     source = source if source.is_absolute() else ENGINE / source
@@ -359,6 +373,10 @@ def queue(project: Project, video=None, title="", description="", hashtags="",
         "fps": str(project.meta.get("fps", "")),
         "rendered_at": iso(datetime.fromtimestamp(source.stat().st_mtime, timezone.utc)),
     }
+    if not report.passed:
+        row["error"] = "caption forced past the check: " + "; ".join(report.failures)[:300]
+        print("  caption: FORCED past %d failed check(s) — recorded in `error`"
+              % len(report.failures))
     header, rows = read_rows(project.data_csv)
     header = header or list(COLUMNS)
     append_row(project.data_csv, header, row)
@@ -694,6 +712,10 @@ def main() -> None:
     p_queue.add_argument("--car", default="", help='e.g. "1969 Ford Mustang Boss 429"')
     p_queue.add_argument("--angle", default="", help="e.g. 'Price / Rarity'")
     p_queue.add_argument("--caption-file", help="three blocks: title, description, hashtags")
+    p_queue.add_argument("--caption-score", type=int,
+                         help="the caption score the brain gave it (gate 80)")
+    p_queue.add_argument("--force", action="store_true",
+                         help="queue a caption that failed the check")
 
     p_sched = sub.add_parser("schedule", help="upload queued films and book their slots")
     p_sched.add_argument("project")
@@ -723,7 +745,8 @@ def main() -> None:
 
     if args.command == "queue":
         queue(project, args.video, args.title, args.description, args.hashtags,
-              args.car, args.angle, args.caption_file)
+              args.car, args.angle, args.caption_file, args.caption_score,
+              args.force)
     elif args.command == "schedule":
         done, failed = schedule(project, args.limit, args.start_at, args.start_delay,
                                 args.start_min, args.start_max, args.gap_min, args.gap_max,

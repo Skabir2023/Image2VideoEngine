@@ -1,0 +1,14 @@
+{
+  "shot": "02_side",
+  "engine": "Meta AI (browser MCP, signed-in Chrome, 0 credits)",
+  "prompt": "Create one photorealistic photograph, vertical portrait 9:16: 1954 Mercedes-Benz 300SL Gullwing coupe, silver paint, gullwing doors, chrome grille with three-pointed star, round headlights, chrome bumpers, red leather interior, chrome hubcap wheels. Side profile, one gullwing door open straight up, full car in frame, empty concrete studio, golden hour light, 35mm, no people, no animals, no text, no watermark",
+  "size": "1152x2048 -> 1080x1920",
+  "generated_at": "2026-11-15T00:02:56+06:00",
+  "checks": {
+    "people": false,
+    "text": false,
+    "watermark": false,
+    "same_car": true
+  },
+  "ok": true
+}

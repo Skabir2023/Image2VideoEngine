@@ -14,7 +14,7 @@ only that film's pictures, voice, scenes, plan and render.
 image2videoEngine/                    ← the engine. Run every command from here.
   assets/                             stage.js, broll.js, text.js, kit-config.js, fonts.css, gsap, fonts/
   sound/engines/                      shared engine recordings + licences
-  tools/                              render-all.sh, scan.py, publish.py + brightbean.py + excel.py
+  tools/                              scene_builder.py, render-all.sh, scan.py, meta.py, publish.py + brightbean.py + excel.py
   video-projects/
     vintage-motor-house/              ← the page (the Facebook channel)
       MASTER PROMPT.md                the posting rules, binding for every film on the page
@@ -22,7 +22,7 @@ image2videoEngine/                    ← the engine. Run every command from her
       data.csv / uploaded.csv         the page's queue and ledger
       1969-ford-mustang-boss-429/     ← a film: the reference build (18.6 s, 1080×1920)
       1957-cadillac-eldorado-brougham/  ← a film (20.0 s, 1920×1080)
-        meta.json index.html build_scenes.py compositions/ stills/
+        meta.json scenes.py index.html compositions/ stills/
         audio/ plan/ qa/ renders/
 ```
 
@@ -47,8 +47,8 @@ and do not skip a step because a film looks easy.
    replaces it.
 1. `README.md` — the commands and the folder map, in plain words.
 2. `video-projects/vintage-motor-house/MASTER PROMPT.md` — the posting rules. **Binding for
-   every reel.** Viral-score rubric, fact-check box, the fixed six-image order, the
-   no-living-beings rule, and the exact three-line caption format. The `.text` file next to it
+   every reel.** Viral-score rubric, fact-check box, the plate cadence and its six fixed
+   angles, the no-living-beings rule, and the exact three-line caption format. The `.text` file next to it
    is the same document. Its machine-readable twin is `META PROMPT.md` in the same folder: the
    prompt we actually send to Meta AI, which asks for those rules in one JSON object. If a rule
    ever differs between them, `MASTER PROMPT.md` wins and `META PROMPT.md` is corrected to match.
@@ -88,7 +88,7 @@ npm run render -- video-projects/<page>/<film>    # mix → every scene → join
 npm run lint -- video-projects/<page>/<film>      # hyperframes lint — 0 errors, 0 warnings
 npm run check -- video-projects/<page>/<film>/renders/<out>.mp4   # blank/black/pop scan
 
-python3 video-projects/<page>/<film>/build_scenes.py      # rewrite that film's compositions/*.html
+python3 tools/scene_builder.py video-projects/<page>/<film>   # rewrite compositions/*.html + index.html
 python3 video-projects/<page>/<film>/audio/build_final.py # rebuild that film's audio/final-audio.wav
 ```
 
@@ -137,8 +137,18 @@ python3 tools/publish.py pick video-projects/vintage-motor-house --count 10
 Ten cars with `Used? = No`, spread across brands and decades — not the ten Cadillacs at the top.
 `pick` lists the next ten in row order, so choose across the whole list, not just its first page.
 
+**When the person names or describes something, that is the brief and it outranks the list.**
+A car, a fact, a memory, a scene, a feeling — "a barn-find Charger that turned out to be a
+Daytona", "something about giant fins and terrible parking" — replaces `pick` for that film: the
+car they named is the subject, the detail they gave is a beat of the script, and the feeling they
+asked for decides the tone. The brief goes into `META PROMPT.md`'s INPUT block as `Brief: …`, and
+Meta returns the five-line `BRIEF` block (heard / car / angle / fact / feeling) before any score.
+The fact-check and the 80 gate still apply: a named car that scores under 80 is reported with the
+angle that could rescue it, never swapped for a "better" car behind their back. Only an empty
+brief falls back to `pick`.
+
 The candidates then go to **Meta AI**, which scores them, names the angle for each, and writes the
-script, caption and six image prompts for the ones that pass — see
+script, caption and image prompts (one per 3 s) for the ones that pass — see
 [Meta AI does the thinking](#meta-ai-does-the-thinking--the-agent-drives-it). Before any build,
 for every candidate:
 
@@ -157,7 +167,18 @@ Step 1 is done when there are ten cars, ten angles, ten scores ≥ 80, and no re
 ### Meta AI does the thinking — the agent drives it
 
 **Meta AI is the default brain for the batch**, through Browser MCP in the person's own signed-in
-Chrome — no API key, nothing to pay for. The agent drives it and edits nothing it says.
+Chrome — no API key, nothing to pay for. The agent drives it and edits nothing it says. It does
+four jobs, always these four: **pick and score the topic, write the script, write every plate
+prompt, and write the caption** — a viral title, a long engaging description that talks to the
+viewer and ends on a call to action, and four or five hashtags.
+
+**One browser tab, one film.** Every browser step of one film — the batch research, every image
+prompt, every download, every retry — runs in **one Browser MCP tab**, opened once and kept for
+the whole film. Never open a tab per prompt and never close one between prompts: Meta AI's thread
+is the context, and a fresh tab throws it away, which is why the same hero plate came back three
+times on the first pass. Use a second tab only when a *different* site is genuinely needed (Flow
+instead of Meta AI), never one tab per image. Close the tab once that film's last plate is
+downloaded.
 
 ```bash
 python3 tools/meta.py --check                     # tab list + is the composer there
@@ -170,7 +191,8 @@ python3 tools/meta.py ask --prompt-file "video-projects/<page>/META PROMPT.md" \
   **INPUT** block per batch: candidates, page numbers, posts wanted, angles used so far.
 - Meta answers inside `<<<PLAN>>>` … `<<<END>>>`, as one JSON object: every candidate scored
   (with `GO`/`REJECT` and a reason), and for each `GO` a full post — title, description, hashtags,
-  script with word count and beat timings, sourced facts, an identity block and six image prompts.
+  script with word count and beat timings, sourced facts, an identity block and one image prompt
+  per 3 s of film.
 - Browser MCP cuts replies at 10 000 characters, so the JSON must stay compact; the driver reads
   the answer back in slices and refuses to press Enter unless the composer holds the text.
 - **Fallback**: if Meta will not answer, the tab is signed out, or the JSON comes back broken, the
@@ -191,11 +213,13 @@ and six prompts) — so the film carries its own evidence.
 PAGE=video-projects/vintage-motor-house
 PROJ=$PAGE/1959-cadillac-fins            # slug = year + car, never title words
 mkdir -p "$PROJ"/{compositions,stills,audio/paragraph,audio/sfx,plan,qa,renders}
-cp $PAGE/1969-ford-mustang-boss-429/{meta.json,index.html,build_scenes.py} "$PROJ"/
+cp $PAGE/1954-mercedes-300sl-gullwing/meta.json "$PROJ"/
+cp $PAGE/1954-mercedes-300sl-gullwing/audio/build_final.py "$PROJ/audio"/
 ```
 
 Edit `meta.json` (page, slug, film, scenes — and clear `status`/`published_at` if the copy came
-from a published film), the `SCENES` table, and `audio/build_final.py`. Write the plan as you go:
+from a published film), the `SCENES` table, and the numbers at the top of `audio/build_final.py`
+(structure stays; it already carries the current sound law). Write the plan as you go:
 `FACTCHECK.md`, `VIRAL.md`, `SCRIPT.md` (word budget, and the three-line caption at the end),
 `PLATES.md`, `PROMPTS.md`, `BEATS.md`. `TIMELINE.md` is written from measurements at the end, not
 up front. One engine, one page folder, one folder per film (30–45 MB); never clone the engine and
@@ -204,16 +228,23 @@ never copy the page — the workbooks and the queue would fork.
 ### 3. Voice first, timing from the voice
 
 One Kokoro take of the whole paragraph (`am_michael`, `speed: 1.2`), then transcribe **that file**
-and copy the word times into `build_scenes.py` and `audio/build_final.py`. Cuts land on the
+and copy the word times into that film's `scenes.py` and its `audio/build_final.py`. Cuts land on the
 transcribed words, never on estimates; a late cut is a re-take, not a stretched clip.
 
-### 4. Six stills, fixed order
+### 4. Plates — one still per 3 seconds
 
-Front ¾ · side · rear · engine bay · interior · wheel, from the kit's own free engine, each prompt
-recorded in `<shot>.images.json`. The six prompts come from Meta's post object in `PLATES.md`; the
-agent may add camera, light and an empty background (Meta's own prompts run to 45 words), and must
-keep the identity block word for word. No people, no text, no watermark, no invented trim. Look at
-every plate before anything is built on top of it; if one drifts, re-shoot just that one.
+**A new plate every 3 seconds.** `plates = ceil(film_seconds / 3)`: an 18 s film is six plates, a
+24 s film is eight, a 27 s film is nine. The six fixed angles come first and in this order —
+front ¾ · side · rear · engine bay · interior · wheel — and every plate after them is a close-up
+(headlight, badge, wheel, exhaust, gauges, engine detail, steering wheel) placed where a beat needs
+a fresh image. No still may run longer than ~3 s; that cadence is the pace of the page. Each prompt
+is recorded in `<shot>.images.json`.
+
+Generate them all in the **one** Meta AI tab, one prompt at a time, repeating the identity block
+word for word. The prompts come from Meta's post object in `PLATES.md`; the agent may add camera,
+light and an empty background (Meta's own prompts run to 45 words) and must never add people,
+text, watermarks or invented trim. Look at every plate before anything is built on top of it; if
+one drifts, re-shoot just that one.
 
 ### 5. Build, render, pass the gates
 
@@ -228,20 +259,45 @@ jumps only where the film intends them, −14.2 ±0.3 LUFS with peak ≤ −1.3 
 looked at yourself — contact sheet, both ends, every seam. A film that fails a gate is fixed, not
 explained, and never shown.
 
-Name it before anyone sees it: **5–6 words**, the caption's first line, in `meta.json` `output`
-and on the render. Never a working name.
+Name it before anyone sees it: **5–11 words**, the caption's first line, in `meta.json` `output`
+and on the render. Never a working name, and never a mood line — the file name is the headline
+that carries the year, the make, the model and one power word.
+
+### The caption pass — write, score, rewrite, then gate
+
+A caption is two passes, because writing and judging are different jobs and one pass does both
+badly. It is the same shape as the batch: score before you spend.
+
+1. **Write** the three parts to the formulas in `MASTER PROMPT.md` — a title of year + make +
+   model + one power word, a description of 3–5 sentences doing five jobs in order, 4–5 tags.
+2. **Score it yourself** out of 100 on the page's five weights — hook shock 25, relatability 20,
+   curiosity gap 20, shareability 15, visual wow 20 — and **rewrite anything under 80**, then
+   score the rewrite. The number is not decoration: it goes in `plan/SCRIPT.md` and `queue` reads
+   it.
+3. **Run the grounding test on the title:** could this title sit on a different car's post? If
+   yes it is a mood line, not a headline — rewrite it. `Doors That Opened To Sky` passed every
+   length rule in this file and still failed that one test.
+4. **Gate it.** `queue` checks the caption with `tools/caption.py` before a row exists: the word
+   and sentence bands, the year and model in the title, the power word, the second person, the
+   question, the tag rule, and the 80 floor. A failure is a rewrite; `--force` queues it anyway
+   and records why in the row's `error` column.
+
+A caption is never written once. The sentence that reads fine to its author is the one that
+scores 64, and 64 is the caption nobody answers.
 
 ### 6. Queue it in `data.csv`
 
 ```bash
 python3 tools/publish.py queue $PROJ --title "…" --description "…" \
-  --hashtags "#… #…" --car "1959 Cadillac …" --angle "Size / Looks"
+  --hashtags " #… #…" --car "1959 Cadillac …" --angle "Size / Looks" \
+  --caption-score 88
 ```
 
-The row is the queue entry: it points at the render where it lies (`video`), carries its
-fingerprint (`video_sha`) and the caption split into its three parts. Nothing is copied and nothing
-moves. `queue` refuses a film whose bytes or caption are already in either CSV — the first of
-three gates against posting the same thing twice.
+`--caption-score` is the number the second pass produced. The row is the queue entry: it points at
+the render where it lies (`video`), carries its fingerprint (`video_sha`) and the caption split
+into its three parts. Nothing is copied and nothing moves. `queue` refuses a caption that fails
+the check, and a film whose bytes or caption are already in either CSV — the first of three gates
+against posting the same thing twice.
 
 ### 7. Publish — only after an explicit yes
 
@@ -294,19 +350,21 @@ This is steps 3–5 of the working procedure at film detail; it is the same orde
 | 1 | Pick a car, one 3-second shocking fact, score it | `plan/VIRAL.md` |
 | 2 | Fact-check year, make/model/trim, engine, production, price/speed | `plan/FACTCHECK.md` |
 | 3 | Write the spoken script to the word budget | `plan/SCRIPT.md` |
-| 4 | Six stills, fixed order, native 1080×1920, no living beings | `stills/*.png` |
+| 4 | Plates, one per 3 s (the six fixed angles first), native 1080×1920, no living beings | `stills/*.png` |
 | 5 | One Kokoro take of the paragraph, `speed: 1.2` | `audio/paragraph/line-01-v120.wav` |
 | 6 | Transcribe that file to word times | `audio/paragraph/transcript.json` |
-| 7 | Fill the scene table: durations, frames, stills, camera, text, word times | `build_scenes.py` → `compositions/*.html` |
+| 7 | Fill the scene table: durations, frames, stills, camera, text, word times | `scenes.py` + `tools/scene_builder.py` → `compositions/*.html` |
 | 8 | Build the mix: voice, engine start, bed ducked to the words, closing roar | `audio/build_final.py` → `audio/final-audio.wav` |
 | 9 | Render, join, mux, scan | `renders/<title>.mp4` |
-| 10 | Write the caption (title, description, hashtags) from `MASTER PROMPT.md` | the `queue` row in `data.csv` |
+| 10 | Write, score (80+) and gate the caption from `MASTER PROMPT.md` | the `queue` row in `data.csv` |
 
 ### Delivery name
 
-A finished film is named after its title, and that title is **5 or 6 words** — the same words as
-the first line of its caption (punctuation simplifies for a filename: `—` becomes `-`). Folders
-keep slugs; the file the person receives and posts is the title, in clear words:
+A finished film is named after its title, and that title is **5–11 words** — the same words as
+the first line of its caption (punctuation simplifies for a filename: `—` becomes `-`). Five is
+the floor, not the target: the title has to name the year, make and model and still land as a
+headline, which takes seven to eleven. Folders keep slugs; the file the person receives and
+posts is the title, in clear words:
 
 ```
 renders/1957 Cadillac Eldorado Brougham - Handbuilt.mp4
@@ -334,10 +392,11 @@ The voice is the clock. Nothing is placed by eye or by silence detection.
   that WAV. Reference build: 41 words, 17.138 s. It is the JSON sidecar that
   `hyperframes transcribe` writes beside the WAV, renamed in place.
 - **Nothing parses that file at build time.** The measured times are copied into the `*_at`
-  values in that film's `build_scenes.py` and the constants in its `audio/build_final.py`. A
+  values in that film's `scenes.py` and the constants in its `audio/build_final.py`. A
   new voice take therefore means re-transcribing *and* rewriting those numbers.
-- The voice is placed at `LEAD = 0.30 s`, so **every word time in the transcript is +0.30**
-  before it is used for picture.
+- The voice is placed at `LEAD = 1.00 s`, so **every word time in the transcript is +1.00**
+  before it is used for picture. That second is not empty air: it is the engine start playing
+alone (see *Sound law*), so the car speaks before the narrator does.
 - **A cut lands ~65 ms before the first word of the next line** — the picture changes in the
   pause, never on top of a word.
 - **Every text reveal sits on the word it belongs to.** A big card that changes mid-word is
@@ -379,6 +438,7 @@ Helpers available to every scene (`assets/`, all local):
 | `BROLL.make(root, opts)` | camera over a still: `src, duration, seed, zoom0, focus, handheld, grain, vignette, shots[], shakes[]` |
 | `BROLL.live(tl, cam)` | binds the camera to the timeline |
 | `BROLL.MOVES` | `hold, push, pull, truckR, truckL, craneUp, craneDown, rollR, rollL, orbitR, orbitL` |
+| `SEAM.blur(tl, dur, opts)` | the seam: focus in at the head, defocus at the tail — a film's only transition |
 | `TX.slam(tl, el, at)` | the big card hits |
 | `TX.roll(tl, el, at, dur, seed)` | a number spins through random digits and locks onto its real value — use it for **every** number, price, year or figure |
 | `TX.words(tl, el, at, gap)` | kicker/label arriving word by word |
@@ -386,10 +446,29 @@ Helpers available to every scene (`assets/`, all local):
 
 ### Seams
 
-Flash cuts between scenes: `0.20 s` flash-out on the outgoing clip, `0.16 s` flash-in on the
-incoming one. **No flash covering frame 0 of the film and none on the last frame.** Scenes are
-joined without re-encoding, so a one-frame error in any scene's duration shifts the audio
-against every cut after it.
+**Seams are a blur cut, not a flash, and they live in the engine.** `assets/seams.js` (loaded
+right after `text.js`) exposes one helper:
+
+```js
+SEAM.blur(tl, DUR);                        // focus in 0.18 s at the head, defocus 0.20 s at the tail
+SEAM.blur(tl, DUR, { in: 0, out: 0.20 });  // frame 0 stays sharp (thumbnail)
+SEAM.blur(tl, DUR, { in: 0.18, out: 0 });  // last frame stays sharp (closing card holds)
+```
+
+The outgoing frame defocuses over its last `0.20 s` (`blur(0 → 18px)`, ease-in) and the incoming
+one focuses in over its first `0.18 s` (`blur(18 → 0px)`, ease-out), on the plate only — the type
+stays sharp, like a focus pull. The picture changes inside a camera move instead of as a white
+hit. Options: `in` / `out` seconds, `px`, `el`. **A scene writes no transition code of its own** —
+one `SEAM.blur` call, and the behaviour is the engine's, so changing the cut changes every film
+at once. **Frame 0 of the film and the last frame stay sharp.**
+
+No white flash overlay, no skew whip, no transition sound. The picture changes in a blur; the
+mix has no whoosh on the cut (see *Sound law*), so the engine bed carries the change. This
+replaced the old `0.20 s` flash-out / `0.16 s` flash-in after the flash read as a strobe on
+repeated viewing.
+
+Scenes are joined without re-encoding, so a one-frame error in any scene's duration shifts the
+audio against every cut after it.
 
 ### Numbers law
 
@@ -409,26 +488,36 @@ caption and a claim.
 
 One engine, one voice, nothing that competes with a word. Three parts, always:
 
-1. **Start, `1.0–1.5 s` at the head** — the engine catching under the hook line. The cranking
-   ramp at `0.10–1.60 s` of `sound/engines/engine-start-idle-rev_*.mp3`, level-matched to
-   `−22 dBFS` RMS (that recording is quiet; measure and normalise, never guess a multiplier).
-   It ducks only lightly under the first words (`×0.55`), because it is the hook.
+1. **Start, exactly `1.0 s` at the head, before the first word** — the engine catching while
+   nothing else is happening, so it is the first thing the viewer hears. The cranking ramp at
+   `0.10–1.10 s` of `sound/engines/engine-start-idle-rev_*.mp3`, at full level, level-matched to
+   `−20 dBFS` RMS (that recording is quiet; measure and normalise, never guess a multiplier). It
+   ends as the first word starts: `LEAD = 1.00 s` in both `scenes.py` and
+   `build_final.py`, and scene 1 is 0.7 s longer than its picture needs.
 2. **Bed, low, all the way through** — the `14.00–16.00 s` idle of the same file, looped with a
    `0.30 s` equal-power crossfade, highpass `42 Hz`, lowpass `2.2 kHz`, compressed flat,
-   level-matched to about `−29 dBFS` RMS. It fades in over `0.8 s` from `1.15 s` so it grows out
-   of the start instead of fighting it.
-3. **Roar, `2.0 s`, after the last word** — the car answers. Take one clean rev whole
-   (`27.72–29.45 s`), play it at rate `0.86` so it lands at `2.01 s` and a deeper edge, and
-   give the last scene that two extra seconds of picture with a camera shake on the hit.
+   level-matched to about `−29 dBFS` RMS. It fades in over `0.8 s` from `1.05 s` so it grows out
+   of the start instead of fighting it, and it never stops for the rest of the film.
+3. **Roar, `2.0 s`, after the last word, with no voice over it** — the car answers and nothing
+   talks across it. Take one clean rev whole (`27.72–29.45 s`), play it at rate `0.86` so it lands
+   at `2.01 s` and a deeper edge, and give the last scene that two extra seconds of picture with a
+   camera shake on the hit. The roar starts on the frame the closing card lands, after the final
+   word has finished, and the tail fades out clean.
 
 **Ducking is built from the transcript, not from a compressor guessing.** Read the word times,
-set the bed to `0.170` (−15 dB) across every spoken word and `1.0` in the gaps, then smooth with
-`20 ms` attack and `220 ms` release. Measured result to keep: bed around **−35 dB in the pauses**
-and **−48 dB under speech** — 20 dB+ below the voice, so it is felt, never heard over a word.
+set the bed to `0.100` (−20 dB) across every spoken word and `1.0` in the gaps, then smooth with
+`20 ms` attack and `220 ms` release. The gap level is what the viewer hears; the moment a word
+begins the bed drops far below it — measured result to keep: about **−35 dB in the pauses** and
+**−52 dB under speech**, 35 dB+ below the voice, so the car is felt under the words and never
+heard over one.
 
 - **No revs under speech.** Accents live in gaps only; the two allowed ones are the start and the
   closing roar.
-- `0.10 s` fade-out at the tail, no whooshes, no low hits, no music.
+- **One low hit, at `17.12 s`, under the closing card only** — it lands with the question and
+  the opening roar so the close has weight. That is the only hit in the film.
+- `0.10 s` fade-out at the tail. **No whooshes on the cuts, no hits under the numbers, no
+  music** — the change of picture is a blur cut and needs no sound; a whoosh on every seam is
+  the fastest way to make a reel feel cheap.
 - Master: **−14.2 LUFS integrated, true peak no higher than −1.3 dBFS**. The speech section
   alone must measure about −14.2 LUFS, so the voice is loud enough on its own.
 - A `2.0 s` roar means the film is `2 s` longer than the voice: extend the **last** scene, keep the
@@ -460,14 +549,34 @@ Fixed, so every reel is recognisably from the same page:
   or speed claim must be verified; if unsure, cut the claim. "Reportedly / around" is allowed,
   a made-up number is not. Horsepower may simply be left out (the reference build does).
 - **Script length:** 38–45 words for 15 s, 78–90 for 30 s. Count them and show the count.
-- Six stills in this exact order: front ¾ hero, side profile, rear, engine bay, interior,
-  wheel close-up. **No humans, no animals, no reflections of people, no text, no watermark**,
-  car only. Same colour, wheels, tyres and body style in all six.
+- **The script is one chain, not a list.** Every sentence grows out of the one before it — carry
+  a word forward, answer the question the last line opened ("So they…", "But it…", "That
+  meant…"), or raise the stakes. No "Also" / "Another thing", no fact dropped in from a new
+  subject, no two sentences that could swap places. The four beats (setup, turn, proof, payoff)
+  are links, not sections. Run the flow test on every script: read it aloud as one breath, delete
+  each sentence and check the next still works (if it does, that sentence was a detour), say the
+  last line straight after the first (if it still makes sense, the middle was padding). Tone is
+  an excited teacher who just found this out — every number lands as a surprise the previous
+  line set up, and the viewer ends feeling they learned something they can repeat.
+- **One plate per 3 s of film.** The six fixed angles first, in this order: front ¾ hero, side
+  profile, rear, engine bay, interior, wheel close-up; then close-ups to fill the cadence.
+  **No humans, no animals, no reflections of people, no text, no watermark**, car only. Same
+  colour, wheels, tyres and body style in every plate.
 - Caption is **exactly three parts, no labels** (title / description / hashtags), blank line
-  between each: title = year + make + model + one power word, under 12 words, no full stop;
-  description = 1–2 lines using one verified fact, ending in a period; hashtags = **3–5**,
-  one line starting with a single space, one brand tag + one classic-car tag + one model tag.
+  between each:
+  - **title** = year + make + model + one power word, under 12 words, no full stop; it is also
+    the file name.
+  - **description** = **a real paragraph, 3–5 sentences, 45–80 words** — never a one-liner. Open
+    on the hook, spend the middle on the verified numbers the film used, talk to the viewer in
+    the second person, compare the car to something they know, and close on a call to action:
+    a question they can answer in a comment. No invented facts, no emoji, no links, no hashtags
+    inside it.
+  - **hashtags** = **4–5**, one line starting with a single space: one brand tag + one
+    classic-car tag + one model or year tag (+ one more only if it is specific to this car).
   Never `#viral #fyp #reels #trending #foryou`.
+- **The caption is scored, not just formatted.** 80 or more on the same five weights as the car,
+  and the title has to pass the grounding test. `queue` runs `tools/caption.py` over it before a
+  row exists — see *The caption pass* before step 6. A caption that fails is rewritten, not queued.
 - American English, short sentences, no emoji, no "hey guys", no hashtags in the voice.
 
 ## Money and other people's media
@@ -481,7 +590,7 @@ Fixed, so every reel is recognisably from the same page:
   video, never redistributed as standalone audio files.
 - Never edit, re-encode or delete the person's own footage or recordings.
 - Voice, if it must be remade (Kokoro running locally). Its new word times must then be copied
-  into that project's `build_scenes.py` and `audio/build_final.py` by hand — the build does not
+  into that project's `scenes.py` and `audio/build_final.py` by hand — the build does not
   read the transcript for you:
 
 ```bash
@@ -512,8 +621,9 @@ ffmpeg -y -v error -i video-projects/<page>/<film>/renders/<out>.mp4 \
 4. Audio: `-14.2 LUFS ±0.3`, peak ≤ −1.3 dBFS, voice clearly above the bed, no rev touching a
    spoken word. Speech section measured on its own.
 5. Facts, word count, caption format re-read against `MASTER PROMPT.md` before sending.
-6. The file is named after its title — **5–6 words**, the same words as the caption's first line,
-   and `meta.json` `output` says the same. Count the words out loud, not by eye.
+6. The file is named after its title — **5–11 words**, the same words as the caption's first line,
+   and `meta.json` `output` says the same. Count the words out loud, not by eye, and read the
+   title on its own: does it name the car and still make a stranger stop? If not, rewrite it.
 
 Report checks that failed or could not run. Never call a film verified because it compiled.
 
@@ -707,11 +817,11 @@ back at the page level and re-run `sync`.
 
 | If you change | Also change |
 | --- | --- |
-| A scene's duration or frame count | `frames`/`dur` in that film's `build_scenes.py`, `FRAMES` in its `audio/build_final.py`, that layer's `data-start`/`data-duration` in `index.html`, its `plan/TIMELINE.md` |
-| Script, voice take or `speed` | re-transcribe, then every `*_at` time in `build_scenes.py`, cut positions in `plan/TIMELINE.md` |
-| A still | keep the filename, or change `STILLS`/`still` in `build_scenes.py` |
+| A scene's duration or frame count | `frames` in that film's `scenes.py`, `FRAMES` in its `audio/build_final.py`, its `plan/TIMELINE.md`; `index.html` is regenerated |
+| Script, voice take or `speed` | re-transcribe, then every `*_at` time in `scenes.py`, cut positions in `plan/TIMELINE.md` |
+| A still | keep the filename, or change `still` in `scenes.py` |
 | Scene slugs or their number | `scenes` in that project's `meta.json` (the render reads it), the layers in `index.html` |
-| The output filename | `output` in `meta.json` — the 5–6 word title, the same words as the caption's first line |
+| The output filename | `output` in `meta.json` — the 5–11 word title, the same words as the caption's first line |
 | Sound levels | `START_*` / `BED_*` / `DUCK*` / `ROAR_*` in `audio/build_final.py`, the sound section of `plan/TIMELINE.md` |
 | A caption, title or hashtag after `queue` | that row's `title`/`description`/`hashtags` **and** its `caption` in `data.csv`, before `schedule` books it |
 | `social.account` or `platform` in `meta.json` | nothing else, but the account must exist and be connected in BrightBean; `uploaded.csv` keeps the old channel's history |
@@ -737,9 +847,10 @@ back at the page level and re-run `sync`.
 - 1080×1920 PNGs are large; downscale before attaching them anywhere with a size limit.
 - `renders/cut/` is disposable — it is regenerated on every render. `audio/final-audio.wav` is
   not: if it is missing, the mux step fails, so run the mix again.
-- Rebuilding the scenes (`python3 video-projects/<page>/<film>/build_scenes.py`) rewrites that
-  project's `compositions/*.html`. Hand edits made in those files are lost — put changes in
-  `build_scenes.py` instead.
+- Rebuilding the scenes (`python3 tools/scene_builder.py video-projects/<page>/<film>`) rewrites
+  that project's `compositions/*.html` and `index.html`. Hand edits made in those files are lost —
+  put the film's own changes in its `scenes.py`, and anything that should hold for every film in
+  `tools/scene_builder.py` or `assets/`.
 - **The workbooks only update where they exist.** `schedule` and `sync` look for `*.xlsx` in the
   film folder and then in its page folder; missing from both means no error and no marks. They
   live at the page level — check the Tracker after the first `schedule` of a batch.
@@ -871,9 +982,9 @@ film they have finished is fine; inventing a post, a score or a view count is no
 `## The working procedure` steps 2–8 are the whole of it; nothing here overrides them. Three things
 only matter once you are inside a single film.
 
-The last step before showing a film is naming it: rename the render to its 5–6 word title (the
-caption's first line), and put that same string in `meta.json` `output` so the next render keeps
-it. A film is never sent under a working name.
+The last step before showing a film is naming it: rename the render to its 5–11 word title (the
+caption's first line, year + make + model + a power word), and put that same string in
+`meta.json` `output` so the next render keeps it. A film is never sent under a working name.
 
 Projects are independent: two can be in progress at once without touching each other, and
 re-rendering the old film never disturbs the new one. Delete `renders/cut/` after a delivery —
@@ -890,7 +1001,7 @@ are deleted, not left half-built.
 | --- | --- |
 | `AGENTS.md` | this file — operating manual for any AI model |
 | `README.md` | plain-words guide for the person |
-| `assets/stage.js`, `broll.js`, `text.js`, `kit-config.js`, `gsap.min.js` | the drawing engine |
+| `assets/stage.js`, `broll.js`, `text.js`, `seams.js`, `kit-config.js`, `gsap.min.js` | the drawing engine |
 | `assets/fonts/`, `fonts.css` | local fonts, no network |
 | `sound/engines/`, `sound/README.md` | engine recordings and their licence |
 | `tools/render-all.sh` | one film: mix → render → join → mux → scan |
@@ -898,6 +1009,7 @@ are deleted, not left half-built.
 | `tools/publish.py` | queue / schedule / status / sync a film to BrightBean, through its page |
 | `tools/brightbean.py` | the API calls: account, multipart video upload, post, schedule, read back |
 | `tools/excel.py` | dependency-free `.xlsx` cell read/write for the two workbooks |
+| `tools/caption.py` | the caption contract as code: counts, bans, the naming rule, the 80 floor |
 | `package.json`, `hyperframes.json`, `node_modules/` | toolchain, shared by all projects |
 | `video-projects/<page>/` | one folder per Facebook page — its rules, workbooks and queue |
 | `video-projects/<page>/<film>/` | one folder per film, inside its page |
@@ -916,14 +1028,14 @@ are deleted, not left half-built.
 | `uploaded.csv` | the ledger: every booked film, its slot, post id and post URL |
 | `<film>/` | a film folder, below |
 
-**One film — `video-projects/<page>/<film>/` (shown here for `1969-ford-mustang-boss-429`):**
+**One film — `video-projects/<page>/<film>/` (shown here for `1954-mercedes-300sl-gullwing`):**
 
 | Path | What it is |
 | --- | --- |
 | `meta.json` | the project's build contract — name, output file, fps, scene order, duration — plus the `social` channel block |
 | `index.html` | master timeline: the scenes and the mix as one film, for preview and lint |
-| `build_scenes.py` | the single table that writes the project's six scenes |
-| `compositions/s01…s06.html` | the scenes, generated by `build_scenes.py` |
+| `scenes.py` | **data only** — the film's scene table: frames, stills, camera, cards, word times |
+| `compositions/s01…s12.html` | the scenes, generated by `tools/scene_builder.py` |
 | `stills/` | the six plates (+ their `.images.json` provenance) |
 | `audio/paragraph/` | the voice take and its word timings — the clock |
 | `audio/build_final.py` | the mix: start, bed loop, word-timed duck, closing roar, loudness |

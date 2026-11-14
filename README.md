@@ -43,7 +43,7 @@ A full run takes a couple of minutes and rewrites that film's render, named by i
 
 ```bash
 python3 $FILM/audio/build_final.py           # only the sound, ~20 s
-python3 $FILM/build_scenes.py                # rewrite the six scenes
+python3 tools/scene_builder.py $FILM         # rewrite scenes + index from the film's scenes.py
 npm run lint -- $FILM                        # HyperFrames check, needs 0 errors
 npm run check -- "$FILM/renders/1969 Ford Mustang Boss 429 - Rarest.mp4"
 ```
@@ -75,26 +75,33 @@ The order is fixed; `AGENTS.md` → *The working procedure* is the same eight st
 command and gate spelled out.
 
 1. **Choose ten, then let Meta score them.** `pick` lists the next cars with `Used? = No`;
-   cross-check each car and angle against the Tracker. The candidates go to **Meta AI** through
+   cross-check each car and angle against the Tracker. Name a car, or describe the story you want
+   ("a barn-find Daytona", "something about giant fins"), and that description becomes the brief
+   instead: the car you named is the subject and the reel is built from your detail. The candidates go to **Meta AI** through
    Browser MCP (`python3 tools/meta.py ask --prompt-file "…/META PROMPT.md"`), which scores each
-   one, picks the angle and writes the script, caption and six image prompts for the ones that
-   pass. Under 80: another angle, then another car — nothing is built below 80. Every number Meta
+   one, picks the angle and writes the script, the caption and one image prompt per 3 seconds for
+   the ones that pass. Under 80: another angle, then another car — nothing is built below 80. Every number Meta
    proposes is checked against a source and written into `plan/FACTCHECK.md`. If Meta will not
    answer, the agent does the same work in the same shape and says so.
 2. **Make the folder.** `video-projects/vintage-motor-house/<car-slug>/`, copying the reference
-   film's `meta.json`, `index.html` and `build_scenes.py` and editing them for the new car, then
+   newest film's `meta.json`, `index.html`, `scenes.py` and `audio/build_final.py` (it carries
+   the current seam and sound law) and editing them for the new car, then
    start the plan files. Same car, new angle → a new folder; never a copy of the page.
 3. **Voice first.** One Kokoro take at `speed: 1.2`, transcribed, and the word times copied into
    the scene table and the sound build by hand — the build does not read the transcript, so those
    numbers are the truth. Cuts land on the transcribed words.
-4. **Draw six stills** — front ¾, side, rear, engine bay, interior, wheel, in that order, from
-   Meta's six prompts in `plan/PLATES.md` (identity block kept word for word), free through the
-   kit's engine, no people, animals or text, each prompt saved beside the plate.
+4. **Draw the plates — one per 3 seconds.** Six fixed angles first (front ¾, side, rear, engine
+   bay, interior, wheel), then close-ups to fill the cadence: 6 plates for 18 s, 8 for 24 s. All
+   of them in the **one** Meta AI tab, opened once for the whole film, prompts from `plan/PLATES.md`
+   (identity block kept word for word), free through the kit's engine, no people, animals or text,
+   each prompt saved beside the plate.
 5. **Build, render, check.** `npm run render -- video-projects/vintage-motor-house/<car-slug>`,
    then lint, the frame scan, the loudness and the frames themselves — and name the file after
-   its title (5–6 words) before anyone sees it.
-6. **Queue it.** `queue` with its title, description, hashtags, `--car` and `--angle` puts one row
-   in `data.csv`, pointing at the render where it lies.
+   its title (5–11 words) before anyone sees it.
+6. **Queue it.** Write the caption, score it out of 100 and rewrite anything under 80, then `queue`
+   with its title, long description, hashtags, `--car`, `--angle` and `--caption-score`. The check
+   runs first (`tools/caption.py`), so a thin caption is refused; a passing one puts one row in
+   `data.csv`, pointing at the render where it lies.
 7. **Publish it, after a yes.** `schedule --dry-run` shows the slot; the real `schedule` uploads,
    books it, moves that one row to `uploaded.csv` and marks both workbooks.
 8. **Sync and measure.** `sync` brings back the post URL and the date; fill views at 48 h and 7
@@ -162,6 +169,7 @@ The engine:
 | `sound/engines/` | the engine recordings, with their licence in `sound/README.md` |
 | `tools/render-all.sh` | the whole pipeline for one film |
 | `tools/scan.py` | blank / black / one-frame-pop scan of any render |
+| `tools/scene_builder.py` | writes every film's scenes and `index.html` from its `scenes.py` table |
 | `tools/publish.py` | pick, queue, schedule, status and sync for one film, through its page |
 | `tools/brightbean.py`, `tools/excel.py` | BrightBean API calls, and the workbook cell writes |
 | `video-projects/<page>/` | one folder per page: rules, workbooks, queue, and its films |
@@ -178,14 +186,14 @@ A page — `video-projects/vintage-motor-house/`:
 | `backup/` | those workbooks as they were before each edit |
 | `data.csv`, `uploaded.csv` | the queue and the ledger — rows only, no video copies |
 
-A film — `video-projects/vintage-motor-house/1969-ford-mustang-boss-429/`:
+A film — `video-projects/vintage-motor-house/1954-mercedes-300sl-gullwing/`:
 
 | Path | What it is |
 | --- | --- |
 | `meta.json` | output name, frame rate, scene order — what the render reads |
-| `index.html` | the six scenes and the mix as one 18.6 s film, for preview |
-| `build_scenes.py` | the one table that writes the six scenes |
-| `compositions/s01…s06.html` | the six scenes |
+| `index.html` | the twelve scenes and the mix as one 19.4 s film, for preview — written by the builder |
+| `scenes.py` | **data only** — the scene table (frames, stills, camera, cards, word times); `tools/scene_builder.py` writes the scenes from it |
+| `compositions/s01…s12.html` | the scenes |
 | `stills/` | the six pictures (1080×1920) and how each was prompted |
 | `audio/paragraph/line-01-v120.wav` | the narration, one take at 1.2× |
 | `audio/paragraph/transcript.json` | the measured word timings every cut and reveal comes from |

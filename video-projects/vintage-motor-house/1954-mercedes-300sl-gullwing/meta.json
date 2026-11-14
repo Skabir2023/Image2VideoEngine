@@ -1,19 +1,29 @@
 {
   "project": "Vintage Motor House",
   "slug": "1954-mercedes-300sl-gullwing",
-  "film": "The First Real Supercar Ever",
-  "id": "1954-mercedes-300sl-gullwing-reel",
-  "status": "planned",
+  "film": "Doors That Opened To Sky",
+  "id": "gullwing-reel",
+  "status": "rebuilt 2026-11-15 - one chained voiceover, 9 scenes, 18.8s, 1s engine start, 2s roar",
   "social": {
     "platform": "facebook",
     "account": "Vintage Motor House"
   },
-  "output": "The First Real Supercar Ever",
-  "width": 1920,
-  "height": 1080,
+  "output": "Doors That Opened To Sky",
+  "width": 1080,
+  "height": 1920,
   "fps": 60,
-  "duration": 0,
-  "scenes": [],
+  "duration": 18.8,
+  "scenes": [
+    "s01-hero",
+    "s02-side",
+    "s03-rear",
+    "s04-star",
+    "s05-engine",
+    "s06-wheel",
+    "s07-injection",
+    "s08-gauges",
+    "s09-closing"
+  ],
   "source": {
     "engine": "meta-ai/browser-mcp",
     "batch": "plan/META-batch-2026-11-14.md",
