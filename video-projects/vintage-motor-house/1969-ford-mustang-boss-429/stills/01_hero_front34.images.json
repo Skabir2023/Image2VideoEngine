@@ -1,0 +1,28 @@
+{
+ "images": [
+  {
+   "engine": "flow",
+   "prompt": "1969 Ford Mustang Boss 429, Candy Apple Red, 2-door fastback hardtop, long Boss nose, big rectangular quad headlights, wide chrome grille, thick chrome bumper, raised hood with louvers, correct Boss 429 fender badges, photorealistic, ultra-detailed, documentary car photography, soft diffuse overcast daylight, gentle paint reflections, no text, no watermark, no people, no humans, no animals, no faces, no hands, empty scene, car only, front three-quarter view from a low angle, car angled slightly toward camera right, the full front end and long hood filling the lower two thirds of a tall vertical frame, clean empty sky above the roofline, parked on empty asphalt at a quiet classic car grounds",
+   "size": [
+    1080,
+    1920
+   ],
+   "at": "2026-11-14T01:24:43",
+   "files": [
+    "01_hero_front34-01.png"
+   ]
+  },
+  {
+   "engine": "flow",
+   "prompt": "1969 Ford Mustang Boss 429, Candy Apple Red, 2-door fastback hardtop, long Boss nose, raised hood with louvers, correct Boss 429 fender badges, photorealistic, ultra-detailed, documentary car photography, soft diffuse overcast daylight, no text, no watermark, no people, no humans, no animals, no faces, no hands, no badges other than Ford, no emblems, no stars, no decals, no stickers, front three-quarter view from a low angle, the full front end and long hood filling the lower half of a tall vertical frame, big rectangular quad headlights, wide chrome grille, thick chrome bumper below the grille, chrome-free plain front valance with no spoiler, clean empty sky above, parked alone on a deserted grey asphalt lot with a bare winter treeline on the horizon, no buildings, no pavilion, no fencing, no signage",
+   "size": [
+    1080,
+    1920
+   ],
+   "at": "2026-11-14T01:46:57",
+   "files": [
+    "01_hero_front34-01.png"
+   ]
+  }
+ ]
+}

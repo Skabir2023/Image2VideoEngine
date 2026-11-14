@@ -1,0 +1,40 @@
+{
+ "images": [
+  {
+   "engine": "flow",
+   "prompt": "1969 Ford Mustang Boss 429, Candy Apple Red, 2-door fastback hardtop, long Boss nose, big rectangular quad headlights, wide chrome grille, thick chrome bumper, raised hood with louvers, correct Boss 429 fender badges, photorealistic, ultra-detailed, documentary car photography, soft diffuse overcast daylight, gentle paint reflections, no text, no watermark, no people, no humans, no animals, no faces, no hands, empty scene, car only, interior seen from the open driver door, steering wheel, dashboard with round gauges, black vinyl seats, correct dashboard layout for this model year, clean interior, vertical framing with the steering wheel in the lower half",
+   "size": [
+    1080,
+    1920
+   ],
+   "at": "2026-11-14T01:32:52",
+   "files": [
+    "05_interior_dash-01.png"
+   ]
+  },
+  {
+   "engine": "flow",
+   "prompt": "1969 Ford Mustang Boss 429, Candy Apple Red, 2-door fastback hardtop, long Boss nose, raised hood with louvers, correct Boss 429 fender badges, photorealistic, ultra-detailed, documentary car photography, soft diffuse overcast daylight, no text, no watermark, no people, no humans, no animals, no faces, no hands, no badges other than Ford, no emblems, no stars, no decals, no stickers, the same single car parked alone in an empty lot, interior seen through the open driver door, black vinyl bucket seats, three-spoke steering wheel, dashboard with round gauges, black door card, empty lot and bare winter treeline far behind, no other car anywhere",
+   "size": [
+    1080,
+    1920
+   ],
+   "at": "2026-11-14T01:41:34",
+   "files": [
+    "05_interior_dash-01.png"
+   ]
+  },
+  {
+   "engine": "flow",
+   "prompt": "Photorealistic interior of a 1969 Ford Mustang Boss 429, camera inside the car at the passenger seat looking across at the driver side, black three-spoke steering wheel with a wood rim in the lower half of the tall frame, dashboard with round speedometer and gauge cluster, black vinyl bucket seats, black door trim along the left edge, windshield across the top showing an empty grey asphalt lot and a bare winter treeline beyond, soft overcast daylight, no doors open, no people, no hands, no faces, no text, no watermark, ultra-detailed documentary car photography",
+   "size": [
+    1080,
+    1920
+   ],
+   "at": "2026-11-14T01:48:33",
+   "files": [
+    "05_interior_dash-01.png"
+   ]
+  }
+ ]
+}

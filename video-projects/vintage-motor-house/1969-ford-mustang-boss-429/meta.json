@@ -1,0 +1,25 @@
+{
+  "project": "Vintage Motor House",
+  "slug": "vintage-motor-house",
+  "film": "1969 Ford Mustang Boss 429 - Rarest",
+  "id": "boss429-reel",
+  "status": "published 2026-11-14 02:40 UTC, Post No. 1",
+  "published_at": "2026-11-14T02:40:00+00:00",
+  "social": {
+    "platform": "facebook",
+    "account": "Vintage Motor House"
+  },
+  "output": "1969 Ford Mustang Boss 429 - Rarest",
+  "width": 1080,
+  "height": 1920,
+  "fps": 60,
+  "duration": 18.6,
+  "scenes": [
+    "s01-hero",
+    "s02-engine",
+    "s03-side",
+    "s04-interior",
+    "s05-wheel",
+    "s06-rear"
+  ]
+}

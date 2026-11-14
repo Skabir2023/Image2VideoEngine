@@ -1,0 +1,30 @@
+{
+  "project": "Vintage Motor House",
+  "slug": "vintage-motor-house",
+  "film": "The Buick That Beat Corvettes",
+  "id": "gnx-reel",
+  "status": "built and queued 2026-11-14, row 65482c13b384",
+  "social": {
+    "platform": "facebook",
+    "account": "Vintage Motor House"
+  },
+  "output": "The Buick That Beat Corvettes",
+  "width": 1080,
+  "height": 1920,
+  "fps": 60,
+  "duration": 21.366667,
+  "scenes": [
+    "s01-hero",
+    "s02-side",
+    "s03-engine",
+    "s04-rear",
+    "s05-interior",
+    "s06-wheel"
+  ],
+  "source": {
+    "engine": "meta-ai/browser-mcp",
+    "batch": "plan/META-batch-2026-11-14.md",
+    "score": 92,
+    "angle": "Engine / Speed"
+  }
+}

@@ -1,0 +1,57 @@
+<!doctype html>
+<!-- Boss 429 reel — master timeline (project: video-projects/vintage-motor-house/1969-ford-mustang-boss-429).
+     Plays the six scenes in order as one 18.6 s vertical film, with the finished mix.
+     Delivery is still rendered per scene and joined (tools/render-all.sh), so this file
+     exists for preview and for the project to be a valid HyperFrames project. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1969 Ford Mustang Boss 429 - Rarest</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; width: 1080px; height: 1920px; overflow: hidden; background: #07070A; }
+  #master { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+  .comp-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="master" data-composition-id="boss429-reel" data-start="0" data-duration="18.6"
+     data-width="1080" data-height="1920">
+
+  <audio id="master-mix" src="audio/final-audio.wav" data-start="0" data-duration="18.6"
+         data-track-index="9" data-volume="1"></audio>
+
+  <div id="layer-s01" class="comp-layer" data-composition-id="s01-hero"
+       data-composition-src="compositions/s01-hero.html"
+       data-start="0" data-duration="4.266667" data-track-index="1"></div>
+
+  <div id="layer-s02" class="comp-layer" data-composition-id="s02-engine"
+       data-composition-src="compositions/s02-engine.html"
+       data-start="4.266667" data-duration="5.183333" data-track-index="2"></div>
+
+  <div id="layer-s03" class="comp-layer" data-composition-id="s03-side"
+       data-composition-src="compositions/s03-side.html"
+       data-start="9.45" data-duration="3.633333" data-track-index="3"></div>
+
+  <div id="layer-s04" class="comp-layer" data-composition-id="s04-interior"
+       data-composition-src="compositions/s04-interior.html"
+       data-start="13.083333" data-duration="1.583333" data-track-index="4"></div>
+
+  <div id="layer-s05" class="comp-layer" data-composition-id="s05-wheel"
+       data-composition-src="compositions/s05-wheel.html"
+       data-start="14.666667" data-duration="1.633333" data-track-index="5"></div>
+
+  <div id="layer-s06" class="comp-layer" data-composition-id="s06-rear"
+       data-composition-src="compositions/s06-rear.html"
+       data-start="16.3" data-duration="2.3" data-track-index="6"></div>
+</div>
+
+<script>
+  // The master itself has no animation; it only holds the scene layers in time.
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines['boss429-reel'] = tl;
+</script>
+</body>
+</html>

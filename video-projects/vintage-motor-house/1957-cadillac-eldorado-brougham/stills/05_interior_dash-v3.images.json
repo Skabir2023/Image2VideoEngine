@@ -1,0 +1,18 @@
+{
+ "images": [
+  {
+   "engine": "flow",
+   "prompt": "Photorealistic interior photograph of a 1957 Cadillac Eldorado Brougham, camera on the rear seat looking forward, turquoise leather bench seats, wide chrome-trimmed dashboard, thin-rimmed chrome steering wheel on the left, chrome instrument panel with round gauges, closed glovebox door, cream headliner and chrome window frames, empty cabin, soft overcast light through the side windows, 35mm photograph, no people, no text, no watermark",
+   "size": [
+    1920,
+    1080
+   ],
+   "at": "2026-11-14T06:56:38",
+   "files": [
+    "05_interior_dash-v3-01.png",
+    "05_interior_dash-v3-02.png",
+    "05_interior_dash-v3-03.png"
+   ]
+  }
+ ]
+}

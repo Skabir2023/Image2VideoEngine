@@ -1,0 +1,61 @@
+<!doctype html>
+<!-- Eldorado Brougham reel — master timeline (project: video-projects/vintage-motor-house/1957-cadillac-eldorado-brougham).
+     Plays the seven scenes in order as one 20 s 16:9 film, with the finished mix.
+     Delivery is still rendered per scene and joined (tools/render-all.sh), so this file
+     exists for preview and for the project to be a valid HyperFrames project. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eldorado Brougham reel</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden; background: #050506; }
+  #master { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+  .comp-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="master" data-composition-id="brougham-reel" data-start="0" data-duration="20"
+     data-width="1920" data-height="1080">
+
+  <audio id="master-mix" src="audio/final-audio.wav" data-start="0" data-duration="20"
+         data-track-index="9" data-volume="1"></audio>
+
+  <div id="layer-s01" class="comp-layer" data-composition-id="s01-hero"
+       data-composition-src="compositions/s01-hero.html"
+       data-start="0" data-duration="5.9" data-track-index="1"></div>
+
+  <div id="layer-s02" class="comp-layer" data-composition-id="s02-side"
+       data-composition-src="compositions/s02-side.html"
+       data-start="5.9" data-duration="1.583333" data-track-index="2"></div>
+
+  <div id="layer-s03" class="comp-layer" data-composition-id="s03-rear"
+       data-composition-src="compositions/s03-rear.html"
+       data-start="7.483333" data-duration="1.566667" data-track-index="3"></div>
+
+  <div id="layer-s04" class="comp-layer" data-composition-id="s04-engine"
+       data-composition-src="compositions/s04-engine.html"
+       data-start="9.05" data-duration="0.55" data-track-index="4"></div>
+
+  <div id="layer-s05" class="comp-layer" data-composition-id="s05-interior"
+       data-composition-src="compositions/s05-interior.html"
+       data-start="9.6" data-duration="2.833333" data-track-index="5"></div>
+
+  <div id="layer-s06" class="comp-layer" data-composition-id="s06-wheel"
+       data-composition-src="compositions/s06-wheel.html"
+       data-start="12.433333" data-duration="4.916667" data-track-index="6"></div>
+
+  <div id="layer-s07" class="comp-layer" data-composition-id="s07-close"
+       data-composition-src="compositions/s07-close.html"
+       data-start="17.35" data-duration="2.65" data-track-index="7"></div>
+</div>
+
+<script>
+  // The master itself has no animation; it only holds the scene layers in time.
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines['brougham-reel'] = tl;
+</script>
+</body>
+</html>

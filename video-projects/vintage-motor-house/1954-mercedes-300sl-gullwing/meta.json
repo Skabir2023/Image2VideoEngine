@@ -1,0 +1,23 @@
+{
+  "project": "Vintage Motor House",
+  "slug": "1954-mercedes-300sl-gullwing",
+  "film": "The First Real Supercar Ever",
+  "id": "1954-mercedes-300sl-gullwing-reel",
+  "status": "planned",
+  "social": {
+    "platform": "facebook",
+    "account": "Vintage Motor House"
+  },
+  "output": "The First Real Supercar Ever",
+  "width": 1920,
+  "height": 1080,
+  "fps": 60,
+  "duration": 0,
+  "scenes": [],
+  "source": {
+    "engine": "meta-ai/browser-mcp",
+    "batch": "plan/META-batch-2026-11-14.md",
+    "score": 90,
+    "angle": "Why It Became Legend"
+  }
+}

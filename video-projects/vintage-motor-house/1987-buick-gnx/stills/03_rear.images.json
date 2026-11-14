@@ -1,0 +1,28 @@
+{
+ "images": [
+  {
+   "engine": "meta",
+   "prompt": "1987 Buick GNX coupe, gloss black paint, blacked-out grille, boxy 1980s Buick Regal coupe body, flared fender arches, black 16-inch mesh alloy wheels, hood louvers, subtle rear spoiler, rear three-quarter view showing the tail lights and the boot spoiler, alone on an empty asphalt lot at golden hour, clean empty background, no other cars, no people, photoreal automotive photography, 35mm lens, vertical composition",
+   "size": [
+    1080,
+    1920
+   ],
+   "at": "2026-11-14T09:47:44",
+   "files": [
+    "03_rear-01.png"
+   ]
+  },
+  {
+   "engine": "meta",
+   "prompt": "1987 Buick GNX coupe, gloss black paint, blacked-out grille, boxy 1980s Buick Regal coupe body, flared fender arches, black 16-inch mesh alloy wheels, hood louvers, subtle rear spoiler, rear view of the whole car standing level, tail lights and boot spoiler facing camera, plain empty asphalt and sky, alone, no other cars, no people, photoreal automotive photography, 35mm lens, vertical composition",
+   "size": [
+    1080,
+    1920
+   ],
+   "at": "2026-11-14T09:50:47",
+   "files": [
+    "03_rear-01.png"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,73 @@
+<!doctype html>
+<!-- SCENE 05 of 6 — full-bleed car plate, camera moving, text cut to the voice. 2.883333 s. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Buick GNX — 05 interior</title>
+<script src="assets/gsap.min.js"></script>
+<script src="assets/stage.js"></script>
+<script src="assets/kit-config.js"></script>
+<script src="assets/broll.js"></script>
+<script src="assets/text.js"></script>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #050506; }
+  #plate { position: absolute; inset: 0; z-index: 0; }
+  #fg { position: absolute; inset: 0; z-index: 2; color: #F5EFE6; }
+  .scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 1020px; background: linear-gradient(0deg, rgba(5,5,6,0.96) 0%, rgba(5,5,6,0.84) 40%, rgba(5,5,6,0.52) 76%, rgba(5,5,6,0) 100%); }
+  .kick { position: absolute; left: 72px; top: 150px; font: 700 31px/1 'JetBrains Mono', monospace; letter-spacing: 0.30em; color: #EFE8DC; text-shadow: 0 2px 20px rgba(0,0,0,0.92); }
+  .b1, .b2 { position: absolute; left: 62px; font: 400 208px/0.90 'Anton', sans-serif; letter-spacing: -0.005em; }
+  .b2.small { font-size: 96px; top: auto; }
+  .b2.mid { font-size: 148px; }
+  .red { color: #E8412B; }
+  .rule { position: absolute; left: 68px; width: 190px; height: 3px; background: #E8412B; transform-origin: 0 50%; }
+  .lab { position: absolute; left: 68px; font: 700 40px/1 'JetBrains Mono', monospace; letter-spacing: 0.28em; text-shadow: 0 2px 22px rgba(0,0,0,0.95); }
+  .foot { position: absolute; left: 68px; font: 500 31px/1.4 'Inter', sans-serif; color: rgba(245,239,230,0.72); text-shadow: 0 2px 18px rgba(0,0,0,0.9); }
+  #flash { position: absolute; inset: 0; z-index: 9; background: #F5EFE6; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="s05-interior" data-start="0" data-duration="2.883333" data-width="1080" data-height="1920">
+  <div id="plate" class="clip" data-start="0" data-duration="2.883333" data-track-index="0"></div>
+  <div id="fg" class="clip" data-start="0" data-duration="2.883333" data-track-index="1">
+    <div class="scrim"></div>
+    <div class="b1" id="b1" style="top:1120px">V6 OVER</div>
+    <div class="b2 red" id="b2" style="top:1330px">A V8?</div>
+    <div class="rule" id="rule" style="top:1560px"></div>
+    <div class="lab" id="lab" style="top:1594px">YOUR CALL</div>
+  </div>
+  <div id="flash" class="clip" data-start="0" data-duration="2.883333" data-track-index="5"></div>
+</div>
+<script>
+(() => {
+  const S = STAGE, DUR = 2.883333, $ = (id) => document.getElementById(id);
+
+  const cam = BROLL.make($('plate'), {
+    src: 'video-projects/vintage-motor-house/1987-buick-gnx/stills/05_interior-01.png',
+    duration: DUR,
+    seed: 67,
+    zoom0: 1.03,
+    focus: '44% 54%',
+    handheld: 1.0,
+    grain: 0.25,
+    vignette: 0.52,
+    shots: [{ t: 0, dur: DUR, move: 'orbitL', by: 44, ease: 'inOutSine' }],
+    shakes: [{ at: 0.03, power: 0.20, decay: 0.12 }],
+  });
+
+  const tl = S.driver(DUR, () => {});
+  BROLL.live(tl, cam);
+
+  TX.slam(tl, $('b1'), 0.30);
+  TX.slam(tl, $('b2'), 0.46);
+  tl.fromTo($('rule'), { scaleX: 0 }, { scaleX: 1, duration: 0.34, ease: 'power3.out' }, 1.30);
+  TX.words(tl, $('lab'), 1.40, 0.04);
+
+  tl.fromTo($('flash'), { opacity: 1 }, { opacity: 0, duration: 0.16, ease: 'power2.out' }, 0);
+  tl.fromTo($('flash'), { opacity: 0 }, { opacity: 1, duration: 0.20, ease: 'power2.in' }, DUR - 0.20);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['s05-interior'] = tl;
+})();
+</script>
+</body>
+</html>

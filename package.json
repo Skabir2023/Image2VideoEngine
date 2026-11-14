@@ -1,0 +1,19 @@
+{
+  "name": "image2video-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared motion-graphics engine: HyperFrames compositions, the animated stage, word-synced text, voice and sound engines. Films live in video-projects/<page>/<film>/.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "render": "bash tools/render-all.sh",
+    "lint": "hyperframes lint",
+    "check": "python3 tools/scan.py"
+  },
+  "dependencies": {
+    "hyperframes": "0.7.109",
+    "puppeteer-core": "25.7.0"
+  }
+}

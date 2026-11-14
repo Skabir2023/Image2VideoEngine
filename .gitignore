@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+
+# Media — never commit rendered video, audio, or stills
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.m4a
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.ico
+
+# Render intermediates (regenerated on every render)
+video-projects/*/*/renders/cut/
+video-projects/*/*/audio/premix.wav
+video-projects/*/*/audio/sfx/
+video-projects/*/*/audio/final-audio.wav
+video-projects/*/*/audio/final-voice.wav
+video-projects/*/*/audio/final-cta.wav
+video-projects/*/*/audio/paragraph/*-prev.wav
+
+# Operational state — the queue and ledger are rewritten by the tools
+video-projects/*/data.csv
+video-projects/*/uploaded.csv
+
+# Workbooks — binary, rewritten in place by tools/excel.py
+video-projects/*/*.xlsx
+video-projects/*/backup/
+
+# Environment / secrets
+.env
+.env.*
+~/.env_brightbean
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Editor
+.vscode/
+.idea/
+*.swp

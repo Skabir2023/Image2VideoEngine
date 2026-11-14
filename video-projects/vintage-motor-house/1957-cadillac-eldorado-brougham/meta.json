@@ -1,0 +1,25 @@
+{
+  "project": "Vintage Motor House",
+  "slug": "1957-cadillac-eldorado-brougham",
+  "film": "1957 Cadillac Eldorado Brougham - Handbuilt",
+  "id": "brougham-reel",
+  "status": "in build",
+  "social": {
+    "platform": "facebook",
+    "account": "Vintage Motor House"
+  },
+  "output": "1957 Cadillac Eldorado Brougham - Handbuilt",
+  "width": 1920,
+  "height": 1080,
+  "fps": 60,
+  "duration": 20.0,
+  "scenes": [
+    "s01-hero",
+    "s02-side",
+    "s03-rear",
+    "s04-engine",
+    "s05-interior",
+    "s06-wheel",
+    "s07-close"
+  ]
+}

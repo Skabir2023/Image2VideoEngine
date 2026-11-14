@@ -1,0 +1,40 @@
+{
+ "images": [
+  {
+   "engine": "flow",
+   "prompt": "1969 Ford Mustang Boss 429, Candy Apple Red, 2-door fastback hardtop, long Boss nose, big rectangular quad headlights, wide chrome grille, thick chrome bumper, raised hood with louvers, correct Boss 429 fender badges, photorealistic, ultra-detailed, documentary car photography, soft diffuse overcast daylight, gentle paint reflections, no text, no watermark, no people, no humans, no animals, no faces, no hands, empty scene, car only, hood open, close view down into the front engine bay filling the frame, big Ford 429 Boss V8, chrome air cleaner, blue valve covers, correct engine bay layout, top-down angled view, clean empty background",
+   "size": [
+    1080,
+    1920
+   ],
+   "at": "2026-11-14T01:30:24",
+   "files": [
+    "04_engine_bay-01.png"
+   ]
+  },
+  {
+   "engine": "flow",
+   "prompt": "1969 Ford Mustang Boss 429, Candy Apple Red, 2-door fastback hardtop, long Boss nose, big rectangular quad headlights, wide chrome grille, thick chrome bumper, raised hood with louvers, correct Boss 429 fender badges, photorealistic, ultra-detailed, documentary car photography, soft diffuse overcast daylight, long Boss nose, big rectangular quad headlights, wide chrome grille, thick chrome bumper, no text, no watermark, no people, no humans, no animals, no faces, no hands, no decals, no stickers, no flag emblems, hood open, looking down into the front engine bay of a 1969 Mustang Boss 429, the correct 429 semi-hemi V8 with aluminum cylinder heads, round chrome air cleaner with a small BOSS 429 decal on top, chrome valve covers, black engine bay sheet metal, visible shock towers and export brace, black radiator, correct engine bay layout, shot from the front of the car at a downward angle with the front grille and quad headlights at the bottom of the frame, clean overcast light, vertical tall frame",
+   "size": [
+    1080,
+    1920
+   ],
+   "at": "2026-11-14T01:36:55",
+   "files": [
+    "04_engine_bay-01.png"
+   ]
+  },
+  {
+   "engine": "flow",
+   "prompt": "1969 Ford Mustang Boss 429, Candy Apple Red, 2-door fastback hardtop, long Boss nose, raised hood with louvers, correct Boss 429 fender badges, photorealistic, ultra-detailed, documentary car photography, soft diffuse overcast daylight, no text, no watermark, no people, no humans, no animals, no faces, no hands, no badges other than Ford, no emblems, no stars, no decals, no stickers, hood open, tight view of the front engine bay only, frame filled edge to edge with the 429 semi-hemi V8 and its aluminum heads, round chrome air cleaner, chrome valve covers, black engine bay sheet metal, shock towers and export brace, black radiator at the bottom edge, the front bumper and grille completely out of frame, clean overcast light",
+   "size": [
+    1080,
+    1920
+   ],
+   "at": "2026-11-14T01:40:19",
+   "files": [
+    "04_engine_bay-01.png"
+   ]
+  }
+ ]
+}

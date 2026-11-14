@@ -1,0 +1,211 @@
+# image2videoEngine — vintage car reels
+
+An engine for making short vertical car films for **Vintage Motor House**: six AI stills of one
+car, motion graphics cut exactly to the spoken words, real engine sound, one MP4 ready for
+Facebook.
+
+The engine (drawing library, fonts, sound, render scripts) is here at the root and is shared.
+Inside `video-projects/` the first folder is the **page** (the Facebook channel), and inside that
+each **film** has its own folder, holding that film's pictures, voice, scenes, plan and renders —
+nothing of the engine.
+
+```
+image2videoEngine/                   ← the engine: run every command from here
+  assets/  sound/  tools/  node_modules/
+  video-projects/
+    vintage-motor-house/             ← the page: rules, workbooks, queue
+      1969-ford-mustang-boss-429/    ← the reference film: 18.6 s, 1080×1920
+      1957-cadillac-eldorado-brougham/  ← a film: 20.0 s, 1920×1080
+```
+
+**If an AI model is working here, it starts with `AGENTS.md`.** This file is the short human
+version.
+
+## Watch it
+
+- `video-projects/vintage-motor-house/1969-ford-mustang-boss-429/renders/1969 Ford Mustang Boss 429 - Rarest.mp4`
+  — the finished film (published 14 Nov 2026)
+- `…/1969-ford-mustang-boss-429/qa/final-sheet.jpg` — the six shots on one sheet
+
+## Rebuild it
+
+You need **Node 22 or newer**, **ffmpeg**, **python3** (with numpy), and **Chrome** on the
+machine. Everything else is inside the folder.
+
+```bash
+npm install                                  # only if node_modules/ is missing
+FILM=video-projects/vintage-motor-house/1969-ford-mustang-boss-429
+npm run render -- $FILM                      # mix → scenes → join → mux → check
+```
+
+A full run takes a couple of minutes and rewrites that film's render, named by its `output` in
+`meta.json`.
+
+```bash
+python3 $FILM/audio/build_final.py           # only the sound, ~20 s
+python3 $FILM/build_scenes.py                # rewrite the six scenes
+npm run lint -- $FILM                        # HyperFrames check, needs 0 errors
+npm run check -- "$FILM/renders/1969 Ford Mustang Boss 429 - Rarest.mp4"
+```
+
+`npm run render` reads the film's `meta.json`, so it works for any film folder without edits.
+
+## What to post next
+
+Two workbooks decide it (they live in `video-projects/vintage-motor-house/`):
+
+- `Vintage-Motor-House-Car-List-300.xlsx` — 312 cars from 1940–1990. Pick from `Used? = No`,
+  and set it to `Yes` with the angle and date once the film is finished.
+- `Vintage-Motor-House-Tracker.xlsx` — one row per post: car, angle, score, views, Star.
+
+`python3 tools/publish.py pick video-projects/vintage-motor-house` prints the next ten and says how
+many are still unused, so you never have to count rows by hand.
+
+Work in batches of ten. Rotate the six angles — Size / Looks, Price / Rarity, Engine / Speed,
+Secret Story, Why It Failed, Why It Became Legend — so ten luxury cars never run in a row. A car
+can come back after 90 days, but only with a different angle, and it gets a **new row at the bottom
+of the list** — the old row stays as the record of what that angle did. A post past 50,000 views
+gets `Star? = Yes` and earns a Part 2 after 90 days.
+
+That is 936 posts before one angle repeats: about 15 months at two a day.
+
+## Make the next reel
+
+The order is fixed; `AGENTS.md` → *The working procedure* is the same eight steps with every
+command and gate spelled out.
+
+1. **Choose ten, then let Meta score them.** `pick` lists the next cars with `Used? = No`;
+   cross-check each car and angle against the Tracker. The candidates go to **Meta AI** through
+   Browser MCP (`python3 tools/meta.py ask --prompt-file "…/META PROMPT.md"`), which scores each
+   one, picks the angle and writes the script, caption and six image prompts for the ones that
+   pass. Under 80: another angle, then another car — nothing is built below 80. Every number Meta
+   proposes is checked against a source and written into `plan/FACTCHECK.md`. If Meta will not
+   answer, the agent does the same work in the same shape and says so.
+2. **Make the folder.** `video-projects/vintage-motor-house/<car-slug>/`, copying the reference
+   film's `meta.json`, `index.html` and `build_scenes.py` and editing them for the new car, then
+   start the plan files. Same car, new angle → a new folder; never a copy of the page.
+3. **Voice first.** One Kokoro take at `speed: 1.2`, transcribed, and the word times copied into
+   the scene table and the sound build by hand — the build does not read the transcript, so those
+   numbers are the truth. Cuts land on the transcribed words.
+4. **Draw six stills** — front ¾, side, rear, engine bay, interior, wheel, in that order, from
+   Meta's six prompts in `plan/PLATES.md` (identity block kept word for word), free through the
+   kit's engine, no people, animals or text, each prompt saved beside the plate.
+5. **Build, render, check.** `npm run render -- video-projects/vintage-motor-house/<car-slug>`,
+   then lint, the frame scan, the loudness and the frames themselves — and name the file after
+   its title (5–6 words) before anyone sees it.
+6. **Queue it.** `queue` with its title, description, hashtags, `--car` and `--angle` puts one row
+   in `data.csv`, pointing at the render where it lies.
+7. **Publish it, after a yes.** `schedule --dry-run` shows the slot; the real `schedule` uploads,
+   books it, moves that one row to `uploaded.csv` and marks both workbooks.
+8. **Sync and measure.** `sync` brings back the post URL and the date; fill views at 48 h and 7
+   days, `Star?` at 50,000+. Then send the file with one line on what changed and tidy the drafts.
+
+`AGENTS.md` has the exact timings, the sound law, the change-coupling table and the known
+traps. One folder holds one film; the engine is shared by all of them.
+
+## Publish it
+
+Posting goes through **BrightBean** (Facebook today). The queue belongs to the page, so it sits
+beside the films, not inside one of them:
+
+```
+video-projects/vintage-motor-house/
+  data.csv      the queue: one row per finished film, with its caption
+  uploaded.csv  everything booked, with its slot
+  1969-ford-mustang-boss-429/   one film
+  1957-cadillac-eldorado-brougham/
+```
+
+You still name the film on the command line; the row goes to the page. There is no copying and no
+`videos/` folder: a row points straight at the finished film in its own `renders/`, so the queue
+holds the title, the description, the hashtags and the file in one line.
+
+The key lives in `image2videoEngine/.env` (or `~/.env_brightbean`) as
+`BRIGHTBEAN_API_KEY=…`. It is never needed inside a project.
+
+```bash
+python3 tools/publish.py queue video-projects/vintage-motor-house/1969-ford-mustang-boss-429 \
+  --title "1969 Ford Mustang Boss 429 - The Rarest One" \
+  --description "They only built 1,359 of these. And it was a NASCAR engine with plates." \
+  --hashtags "#Mustang #ClassicCars #Boss429 #1969" \
+  --car "1969 Ford Mustang Boss 429" --angle "Price / Rarity"
+
+python3 tools/publish.py status video-projects/<page>/<film>
+python3 tools/publish.py schedule video-projects/<page>/<film> --dry-run   # the slot, nothing sent
+python3 tools/publish.py schedule video-projects/<page>/<film>             # upload and book
+python3 tools/publish.py sync video-projects/<page>/<film>                 # get the post URL
+```
+
+`queue` writes the caption and the film's address as one row. `schedule` uploads it from where it
+lies, books a slot (the first 1–2 hours out, then one every 4–5 hours), and moves the **row** from
+`data.csv` to `uploaded.csv` — the film never moves — then marks both workbooks: `Used? = Yes`
+with angle and date in the Car List, `Posted` in the Tracker. `sync` reads the post back and fills
+in the URL once it is live.
+
+**A film can never go out twice.** Each row carries a fingerprint of its file; `queue` refuses a
+film that is already queued, `schedule` skips one that is already booked (even under a different
+title), and a retried run adopts its own earlier post instead of making a second one.
+
+The Car List and Tracker live at the page level, next to `data.csv`, and that is where the marks
+land. One copy per page — never one per film, or the calendar splits in two.
+
+Nothing is uploaded or scheduled without your yes for that film.
+
+## What is where
+
+The engine:
+
+| Path | What it is |
+| --- | --- |
+| `AGENTS.md` | operating manual for an AI model working here |
+| `assets/*.js`, `assets/fonts/` | the drawing engine, GSAP and the local fonts |
+| `sound/engines/` | the engine recordings, with their licence in `sound/README.md` |
+| `tools/render-all.sh` | the whole pipeline for one film |
+| `tools/scan.py` | blank / black / one-frame-pop scan of any render |
+| `tools/publish.py` | pick, queue, schedule, status and sync for one film, through its page |
+| `tools/brightbean.py`, `tools/excel.py` | BrightBean API calls, and the workbook cell writes |
+| `video-projects/<page>/` | one folder per page: rules, workbooks, queue, and its films |
+
+A page — `video-projects/vintage-motor-house/`:
+
+| Path | What it is |
+| --- | --- |
+| `MASTER PROMPT.md` | the posting rules every film on the page follows |
+| `META PROMPT.md` | those rules as one prompt for Meta AI; only its INPUT block changes per batch |
+| `plan/META-batch-<date>.md` | Meta's raw answer for a batch — scores, scripts, captions, prompts |
+| `Vintage-Motor-House-Car-List-300.xlsx` | the 312 cars, with `Used?` and what was done |
+| `Vintage-Motor-House-Tracker.xlsx` | one row per post: car, angle, score, views, Star |
+| `backup/` | those workbooks as they were before each edit |
+| `data.csv`, `uploaded.csv` | the queue and the ledger — rows only, no video copies |
+
+A film — `video-projects/vintage-motor-house/1969-ford-mustang-boss-429/`:
+
+| Path | What it is |
+| --- | --- |
+| `meta.json` | output name, frame rate, scene order — what the render reads |
+| `index.html` | the six scenes and the mix as one 18.6 s film, for preview |
+| `build_scenes.py` | the one table that writes the six scenes |
+| `compositions/s01…s06.html` | the six scenes |
+| `stills/` | the six pictures (1080×1920) and how each was prompted |
+| `audio/paragraph/line-01-v120.wav` | the narration, one take at 1.2× |
+| `audio/paragraph/transcript.json` | the measured word timings every cut and reveal comes from |
+| `audio/build_final.py` | builds the mix from the voice and the engine files |
+| `audio/final-audio.wav` | the master mix that gets muxed onto the picture |
+| `plan/` | the paper trail: viral score, facts, prompts, script, beats, timeline |
+| `qa/` | contact sheets checked before sending |
+| `renders/` | the finished film, named after its title |
+
+## The sound
+
+One big-block V8, kept away from the words. Its sustained section is looped into a steady,
+deep idle and ducked 30 dB whenever a word is spoken; the only real rev comes after the last
+word, where the car answers the final question. Measured: −14.2 LUFS, peak −2.4 dBFS. The
+knobs are at the top of the film's `audio/build_final.py`, the reasoning in its
+`plan/TIMELINE.md`.
+
+## Licence
+
+The two engine recordings are from Pixabay under the Pixabay Content License: free for
+commercial use, no attribution, no royalties, but the audio files themselves may not be
+redistributed on their own or claimed as your own recording. Inside the video is fine.
+Details in `sound/README.md`.
