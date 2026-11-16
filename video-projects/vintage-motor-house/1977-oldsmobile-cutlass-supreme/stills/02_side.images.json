@@ -1,0 +1,12 @@
+{
+ "engine": "meta-ai/browser-mcp",
+ "prompt": "Create one photorealistic photograph, vertical portrait 9:16: 1977 Oldsmobile Cutlass Supreme Brougham two-door Colonnade coupe, deep metallic navy-blue body with a padded dark blue Landau vinyl roof, wide chrome split grille with vertical bars, quad rectangular headlamps in chrome bezels, chrome bumpers with black rub strips, blue velour bench interior with a woodgrain dash and round gauges, Rally wheels with chrome trim rings and whitewall tyres, and a small-block V8 painted GM corporate blue under the hood. Parked square to the camera at a little distance, the whole car in one frame with its nose to the left, camera at door-handle height, both Rally wheels and the full Landau roof visible, no other vehicle in the frame, on a wide open park lawn under mature trees, warm afternoon light. restored to showroom condition, glass-glossy paint with deep mirror reflections, spotless chrome and trim, clean tyres, every panel polished, rich saturated colour, bright clean light, 35mm, no people, no animals, no text, no watermark.",
+ "size": [
+  1080,
+  1920
+ ],
+ "files": [
+  "02_side.png"
+ ],
+ "at": "2026-11-16T16:25:38"
+}

@@ -1,0 +1,60 @@
+<!doctype html>
+<!-- 1977 Oldsmobile Cutlass Supreme - The Best-Seller That Hid A Chevrolet — master timeline. 10 scenes, 1292 frames = 21.533 s at 60 fps.
+     Written by tools/scene_builder.py from scenes.py, so the layers can never drift from the scenes. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1977 Oldsmobile Cutlass Supreme - The Best-Seller That Hid A Chevrolet</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; width: 1080px; height: 1920px; overflow: hidden; background: #050506; }
+  #master { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+  .comp-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="master" data-composition-id="cutlass-supreme-reel" data-start="0" data-duration="21.533333"
+     data-width="1080" data-height="1920">
+
+  <audio id="master-mix" src="audio/final-audio.wav" data-start="0" data-duration="21.533333"
+         data-track-index="20" data-volume="1"></audio>
+
+  <div id="layer-01" class="comp-layer" data-composition-id="s01-hero"
+       data-composition-src="compositions/s01-hero.html"
+       data-start="0.000000" data-duration="2.400000" data-track-index="1"></div>
+  <div id="layer-02" class="comp-layer" data-composition-id="s02-side"
+       data-composition-src="compositions/s02-side.html"
+       data-start="2.400000" data-duration="2.133333" data-track-index="2"></div>
+  <div id="layer-03" class="comp-layer" data-composition-id="s03-rear"
+       data-composition-src="compositions/s03-rear.html"
+       data-start="4.533333" data-duration="2.383333" data-track-index="3"></div>
+  <div id="layer-04" class="comp-layer" data-composition-id="s04-engine"
+       data-composition-src="compositions/s04-engine.html"
+       data-start="6.916667" data-duration="1.550000" data-track-index="4"></div>
+  <div id="layer-05" class="comp-layer" data-composition-id="s05-belt"
+       data-composition-src="compositions/s05-belt.html"
+       data-start="8.466667" data-duration="1.333333" data-track-index="5"></div>
+  <div id="layer-06" class="comp-layer" data-composition-id="s06-valvecover"
+       data-composition-src="compositions/s06-valvecover.html"
+       data-start="9.800000" data-duration="2.433333" data-track-index="6"></div>
+  <div id="layer-07" class="comp-layer" data-composition-id="s07-interior"
+       data-composition-src="compositions/s07-interior.html"
+       data-start="12.233333" data-duration="1.233333" data-track-index="7"></div>
+  <div id="layer-08" class="comp-layer" data-composition-id="s08-gauge"
+       data-composition-src="compositions/s08-gauge.html"
+       data-start="13.466667" data-duration="2.916667" data-track-index="8"></div>
+  <div id="layer-09" class="comp-layer" data-composition-id="s09-grille"
+       data-composition-src="compositions/s09-grille.html"
+       data-start="16.383333" data-duration="2.866667" data-track-index="9"></div>
+  <div id="layer-10" class="comp-layer" data-composition-id="s10-tail"
+       data-composition-src="compositions/s10-tail.html"
+       data-start="19.250000" data-duration="2.283333" data-track-index="10"></div>
+</div>
+
+<script>
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines['cutlass-supreme-reel'] = tl;
+</script>
+</body></html>

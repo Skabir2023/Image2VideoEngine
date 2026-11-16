@@ -1,0 +1,72 @@
+<!doctype html>
+<!-- The Most Imposing 1969 Dodge Charger Daytona Ever Built — master timeline. 14 scenes, 1800 frames = 30.000 s at 60 fps.
+     Written by tools/scene_builder.py from scenes.py, so the layers can never drift from the scenes. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Most Imposing 1969 Dodge Charger Daytona Ever Built</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; width: 1080px; height: 1920px; overflow: hidden; background: #050506; }
+  #master { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+  .comp-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="master" data-composition-id="daytona-reel" data-start="0" data-duration="30.000000"
+     data-width="1080" data-height="1920">
+
+  <audio id="master-mix" src="audio/final-audio.wav" data-start="0" data-duration="30.000000"
+         data-track-index="20" data-volume="1"></audio>
+
+  <div id="layer-01" class="comp-layer" data-composition-id="s01-hero"
+       data-composition-src="compositions/s01-hero.html"
+       data-start="0.000000" data-duration="3.233333" data-track-index="1"></div>
+  <div id="layer-02" class="comp-layer" data-composition-id="s02-side"
+       data-composition-src="compositions/s02-side.html"
+       data-start="3.233333" data-duration="3.050000" data-track-index="2"></div>
+  <div id="layer-03" class="comp-layer" data-composition-id="s03-rear"
+       data-composition-src="compositions/s03-rear.html"
+       data-start="6.283333" data-duration="2.816667" data-track-index="3"></div>
+  <div id="layer-04" class="comp-layer" data-composition-id="s04-wing"
+       data-composition-src="compositions/s04-wing.html"
+       data-start="9.100000" data-duration="1.283333" data-track-index="4"></div>
+  <div id="layer-05" class="comp-layer" data-composition-id="s05-strut"
+       data-composition-src="compositions/s05-strut.html"
+       data-start="10.383333" data-duration="1.800000" data-track-index="5"></div>
+  <div id="layer-06" class="comp-layer" data-composition-id="s06-tail"
+       data-composition-src="compositions/s06-tail.html"
+       data-start="12.183333" data-duration="2.100000" data-track-index="6"></div>
+  <div id="layer-07" class="comp-layer" data-composition-id="s07-nose"
+       data-composition-src="compositions/s07-nose.html"
+       data-start="14.283333" data-duration="2.866667" data-track-index="7"></div>
+  <div id="layer-08" class="comp-layer" data-composition-id="s08-window"
+       data-composition-src="compositions/s08-window.html"
+       data-start="17.150000" data-duration="2.083333" data-track-index="8"></div>
+  <div id="layer-09" class="comp-layer" data-composition-id="s09-engine"
+       data-composition-src="compositions/s09-engine.html"
+       data-start="19.233333" data-duration="1.800000" data-track-index="9"></div>
+  <div id="layer-10" class="comp-layer" data-composition-id="s10-steering"
+       data-composition-src="compositions/s10-steering.html"
+       data-start="21.033333" data-duration="2.800000" data-track-index="10"></div>
+  <div id="layer-11" class="comp-layer" data-composition-id="s11-wheel"
+       data-composition-src="compositions/s11-wheel.html"
+       data-start="23.833333" data-duration="2.050000" data-track-index="11"></div>
+  <div id="layer-12" class="comp-layer" data-composition-id="s12-close"
+       data-composition-src="compositions/s12-close.html"
+       data-start="25.883333" data-duration="1.616667" data-track-index="12"></div>
+  <div id="layer-13" class="comp-layer" data-composition-id="s13-badge"
+       data-composition-src="compositions/s13-badge.html"
+       data-start="27.500000" data-duration="1.100000" data-track-index="13"></div>
+  <div id="layer-14" class="comp-layer" data-composition-id="s14-bookend"
+       data-composition-src="compositions/s14-bookend.html"
+       data-start="28.600000" data-duration="1.400000" data-track-index="14"></div>
+</div>
+
+<script>
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines['daytona-reel'] = tl;
+</script>
+</body></html>

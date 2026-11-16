@@ -1,0 +1,283 @@
+#!/usr/bin/env python3
+"""Final audio for the Dodge Charger Daytona reel — 30.000 s, read by am_adam.
+
+The car is on the whole time, and it never covers a word.
+
+  0.00 – 1.00   the engine catching, loud and alone: the first thing anyone hears
+  0.90 – 2.35   it settles away under the narrator instead of stopping dead
+  1.00 – 29.90  a strong idle bed the whole way through, ducked under every spoken word
+  26.90 – 28.91 the payoff: two seconds of the engine roaring, louder than anything else
+
+The duck is not a compressor guessing at speech: it is built from the transcript's word
+times, so the bed is already down before each word starts. The bed sits 20 dB below itself
+while a word is spoken and comes back up, strong, in every pause.
+
+Picture (1800 frames = 30.000 s): 194 | 183 | 169 | 77 | 108 | 126 | 172 | 125 | 108 | 168 | 123 | 97 | 66 | 84
+Scene 12 is the closing card, 13 the badge and 14 the bookend, all above the roar.
+"""
+import math
+import re
+import json
+import subprocess
+import wave
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+SFX = ROOT / "sfx"
+SFX.mkdir(exist_ok=True)
+SR = 48000
+TOTAL = 30.000
+TARGET_LUFS = -14.2
+
+SPEECH_IN = ROOT / "paragraph" / "line-01-v120.wav"   # am_adam, speed 1.03 (see paragraph/voice.json)
+TRANSCRIPT = ROOT / "paragraph" / "transcript.json"
+VOICE_OUT = ROOT / "final-voice.wav"
+MIX_OUT = ROOT / "final-audio.wav"
+
+
+def _engine_root(start):
+    """The engine root: the folder holding sound/ and assets/, however deep the film sits."""
+    for parent in start.parents:
+        if (parent / "sound" / "engines").is_dir():
+            return parent
+    raise SystemExit("cannot find the engine root above %s" % start)
+
+
+LIB = _engine_root(ROOT) / "sound" / "engines"
+ENGINE = LIB / "engine-start-idle-rev_nhumphrey_pixabay-33510.mp3"
+
+# --- the car ------------------------------------------------------------------
+START_SLICE = (0.10, 2.60)   # key-on, fire, and the first settle of the idle
+START_RMS_DB = -18.0         # level-matched, and loud: the car speaks before the narrator
+START_HOLD = 0.90            # full level for the first second...
+START_SETTLE = 1.45          # ...then it slides down under the voice over 1.45 s, no corner
+START_DUCK_FLOOR = 0.55      # under a word the settling start only comes down a little
+BED_SLICE = (14.00, 16.00)   # steady idle, no revs inside it
+BED_RMS_DB = -19.0           # strong: the car is running right there for the whole film
+BED_GAIN = 1.00              # trim on top of the level match
+LOOP_XFADE = 0.30            # equal-power crossfade so the loop has no seam
+BED_IN = (1.00, 0.70)        # grows out of the start rather than fighting it
+
+ROAR_AT = 26.90              # after the last word ("below." ends 26.84)
+ROAR_SLICE = (27.72, 29.45)  # one clean rev, taken whole
+ROAR_RATE = 0.86             # 1.73 s -> 2.01 s, and a deeper, harder-edged roar
+ROAR_RMS_DB = -15.5          # level-matched so the closing roar is the loudest thing in the film
+ROAR_GAIN = 1.12             # ...and a touch above that on purpose
+
+# --- the voice ----------------------------------------------------------------
+LEAD = 1.00
+DUCK = 0.100                 # the bed while a word is spoken: -20 dB
+DUCK_ATTACK = 0.020          # already down by the time the word lands
+DUCK_RELEASE = 0.220         # breathes back up in the gaps, never pumps
+
+FRAMES = [194, 183, 169, 77, 108, 126, 172, 125, 108, 168, 123, 97, 66, 84]
+CUTS = [sum(FRAMES[:i]) / 60 for i in range(1, len(FRAMES))]
+
+
+def ff(args):
+    subprocess.run(["ffmpeg", "-y", "-v", "error", *args], check=True)
+
+
+def rdur(p: Path) -> float:
+    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                          "-of", "csv=p=0", str(p)], capture_output=True, text=True, check=True)
+    return float(out.stdout.strip())
+
+
+def read_wav(p: Path) -> bytes:
+    with wave.open(str(p)) as w:
+        return w.readframes(w.getnframes())
+
+
+def write_wav(p: Path, data: bytes):
+    with wave.open(str(p), "w") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(SR)
+        w.writeframes(data)
+
+
+def rms_db(samples) -> float:
+    if not samples:
+        return -120.0
+    return 20 * math.log10(math.sqrt(sum(s * s for s in samples) / len(samples)) / 32768 + 1e-12)
+
+
+read = rdur(SPEECH_IN)
+print(f"read {read:.3f}s (am_adam) -> speech {LEAD:.2f}-{LEAD + read:.3f}s")
+
+# ---- voice -------------------------------------------------------------------
+ff(["-i", str(SPEECH_IN),
+    "-af", f"aresample={SR},adelay={int(LEAD * 1000)}:all=1,apad",
+    "-t", f"{TOTAL}", "-ar", str(SR), "-ac", "1", "-c:a", "pcm_s16le", str(VOICE_OUT)])
+
+voice = read_wav(VOICE_OUT)
+n_total = len(voice) // 2
+
+# ---- the duck curve, built from the words themselves -------------------------
+words = json.loads(TRANSCRIPT.read_text())
+spans = []
+for w in words:
+    a = int((w["start"] + LEAD) * SR)
+    b = int((w["end"] + LEAD) * SR)
+    if b > a:
+        spans.append((a, b))
+
+target = [1.0] * n_total
+for a, b in spans:
+    for i in range(max(0, a), min(n_total, b)):
+        target[i] = DUCK
+
+ca = 1 - math.exp(-1 / (DUCK_ATTACK * SR))
+cr = 1 - math.exp(-1 / (DUCK_RELEASE * SR))
+curve = [0.0] * n_total
+g = 1.0
+for i in range(n_total):
+    t = target[i]
+    g += (t - g) * (ca if t < g else cr)
+    curve[i] = g
+print(f"duck: {len(spans)} word spans, floor {DUCK:.3f} ({20 * math.log10(DUCK):.1f} dB)")
+print(f"start: {START_RMS_DB:.0f} dB held to {START_HOLD:.2f}s, then settling over {START_SETTLE:.2f}s")
+
+speech_mask = [False] * n_total
+for a, b in spans:
+    for i in range(max(0, a), min(n_total, b)):
+        speech_mask[i] = True
+pauses = [i for i in range(int(1.8 * SR), n_total) if not speech_mask[i]]
+speaking = [i for i in range(n_total) if speech_mask[i]]
+
+# ---- source, decoded once ----------------------------------------------------
+src = SFX / "engine-src.wav"
+ff(["-i", str(ENGINE), "-ar", str(SR), "-ac", "1", "-c:a", "pcm_s16le", str(src)])
+raw = read_wav(src)
+src_s = [int.from_bytes(raw[i:i + 2], "little", signed=True) for i in range(0, len(raw), 2)]
+
+# ---- start -------------------------------------------------------------------
+a, b = int(START_SLICE[0] * SR), int(START_SLICE[1] * SR)
+start_s = src_s[a:b]
+start_rms = rms_db(start_s)
+start_gain = 10 ** ((START_RMS_DB - start_rms) / 20)
+start_n = len(start_s)
+print(f"start {START_SLICE[1] - START_SLICE[0]:.2f}s  rms {start_rms:.1f} dB  "
+      f"gain {start_gain:.2f} ({20 * math.log10(start_gain):+.1f} dB) -> {START_RMS_DB:.0f} dB")
+
+start_track = [0] * n_total
+for i in range(min(start_n, n_total)):
+    t = i / SR
+    fade_in = min(1.0, i / (0.020 * SR))
+    # the settle: full level to START_HOLD, then a raised cosine down to zero — the car never
+    # stops, it just gets out of the narrator's way
+    x = min(1.0, max(0.0, (t - START_HOLD) / START_SETTLE))
+    settle = 0.5 + 0.5 * math.cos(math.pi * x)
+    tail = min(1.0, (start_n - i) / (0.150 * SR))
+    ducked = START_DUCK_FLOOR + (1 - START_DUCK_FLOOR) * curve[i]
+    start_track[i] = int(start_s[i] * start_gain * fade_in * settle * tail * ducked)
+
+# ---- bed ---------------------------------------------------------------------
+a, b = int(BED_SLICE[0] * SR), int(BED_SLICE[1] * SR)
+slice_s = src_s[a:b]
+n = len(slice_s)
+xf = int(LOOP_XFADE * SR)
+need = n_total
+
+looped = list(slice_s)
+while len(looped) < need:
+    tail = looped[-xf:]
+    for i in range(xf):
+        t = i / (xf - 1)
+        looped[len(looped) - xf + i] = int(tail[i] * math.cos(t * math.pi / 2)
+                                           + slice_s[i] * math.sin(t * math.pi / 2))
+    looped.extend(slice_s[xf:n])
+looped = looped[:need]
+
+# tone: a low idle, nothing bright enough to read as a roar
+bed_raw = SFX / "engine-bed-raw.wav"
+write_wav(bed_raw, b"".join(max(-32768, min(32767, s)).to_bytes(2, "little", signed=True)
+                            for s in looped))
+bed_rms = rms_db(looped)
+bed_norm = 10 ** ((BED_RMS_DB - bed_rms) / 20)
+bed_wav = SFX / "engine-bed.wav"
+fade_in_at, fade_in_len = BED_IN
+ff(["-i", str(bed_raw), "-af",
+    f"highpass=f=42,lowpass=f=2200,"
+    f"equalizer=f=170:width_type=o:width=1.2:g=-3,equalizer=f=820:width_type=o:width=1.5:g=1.5,"
+    f"acompressor=threshold=0.020:ratio=8:attack=10:release=220:makeup=1,"
+    f"volume={bed_norm * BED_GAIN:.3f},afade=t=in:st={fade_in_at}:d={fade_in_len},"
+    f"afade=t=out:st={TOTAL - 0.40}:d=0.40",
+    "-t", f"{TOTAL}", "-ar", str(SR), "-ac", "1", "-c:a", "pcm_s16le", str(bed_wav)])
+print(f"engine bed: {n / SR:.2f}s loop, {LOOP_XFADE:.2f}s crossfade, "
+      f"rms {bed_rms:.1f} dB -> {BED_RMS_DB:.0f} dB")
+
+bed_bytes = read_wav(bed_wav)
+bed_track = [0] * n_total
+for i in range(n_total):
+    j = i * 2
+    s = int.from_bytes(bed_bytes[j:j + 2], "little", signed=True)
+    bed_track[i] = int(s * curve[i])
+
+bed_lvl_pause = rms_db([bed_track[i] for i in pauses[::13]])
+bed_lvl_speech = rms_db([bed_track[i] for i in speaking[::13]])
+print(f"bed level: {bed_lvl_pause:.1f} dB in the pauses, {bed_lvl_speech:.1f} dB under speech "
+      f"({bed_lvl_pause - bed_lvl_speech:.1f} dB of duck)")
+
+# ---- roar --------------------------------------------------------------------
+roar_len = ROAR_SLICE[1] - ROAR_SLICE[0]
+roar_out = ROAR_AT + roar_len / ROAR_RATE
+roar_seg = SFX / "roar-raw.wav"
+ff(["-i", str(ENGINE), "-af",
+    f"atrim={ROAR_SLICE[0]}:{ROAR_SLICE[1]},asetpts=PTS-STARTPTS,"
+    f"asetrate=44100*{ROAR_RATE},aresample={SR},aformat=channel_layouts=mono,"
+    f"afade=t=in:st=0:d=0.020,afade=t=out:st={roar_len / ROAR_RATE - 0.30}:d=0.30,"
+    f"highpass=f=40,lowpass=f=11000",
+    "-ar", str(SR), "-ac", "1", "-c:a", "pcm_s16le", str(roar_seg)])
+roar_raw = read_wav(roar_seg)
+roar_s = [int.from_bytes(roar_raw[i:i + 2], "little", signed=True) for i in range(0, len(roar_raw), 2)]
+roar_rms = rms_db(roar_s)
+roar_gain = 10 ** ((ROAR_RMS_DB - roar_rms) / 20) * ROAR_GAIN
+roar_track = [0] * n_total
+off = int(ROAR_AT * SR)
+for i, s in enumerate(roar_s[:max(0, n_total - off)]):
+    roar_track[off + i] = max(-32768, min(32767, int(s * roar_gain)))
+print(f"roar at {ROAR_AT:.2f}s for {roar_len / ROAR_RATE:.2f}s (rate {ROAR_RATE}) -> ends {roar_out:.2f}s, "
+      f"rms {roar_rms:.1f} dB, gain {roar_gain:.2f} -> {ROAR_RMS_DB:.1f} dB")
+
+# ---- sum ---------------------------------------------------------------------
+out = [0] * n_total
+for i in range(n_total):
+    v = int.from_bytes(voice[i * 2:i * 2 + 2], "little", signed=True)
+    out[i] = max(-32768, min(32767, v + bed_track[i] + start_track[i] + roar_track[i]))
+
+premix = SFX / "premix.wav"
+write_wav(premix, b"".join(v.to_bytes(2, "little", signed=True) for v in out))
+
+ff(["-i", str(premix), "-af",
+    f"afade=t=out:st={TOTAL - 0.12}:d=0.12,loudnorm=I=-14.2:TP=-1.3:LRA=14,aresample=48000",
+    "-ar", str(SR), "-ac", "2", "-c:a", "pcm_s16le", str(MIX_OUT)])
+
+
+def loud(p: Path) -> float:
+    o = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(p), "-af", "ebur128", "-f", "null", "-"],
+                       capture_output=True, text=True).stderr
+    return float(re.findall(r"I:\s+(-?[0-9.]+) LUFS", o)[-1])
+
+
+def peak(p: Path) -> float:
+    o = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(p), "-af", "ebur128=peak=true",
+                        "-f", "null", "-"], capture_output=True, text=True).stderr
+    return float(re.findall(r"Peak:\s+(-?[0-9.]+) dBFS", o)[-1])
+
+
+for _ in range(3):
+    got, tp = loud(MIX_OUT), peak(MIX_OUT)
+    delta = TARGET_LUFS - got
+    if abs(delta) < 0.2:
+        break
+    tmp = MIX_OUT.with_suffix(".gain.wav")
+    safe = min(delta, -1.0 - tp)
+    ff(["-i", str(MIX_OUT), "-af", f"volume={safe:.2f}dB",
+        "-ar", str(SR), "-ac", "2", "-c:a", "pcm_s16le", str(tmp)])
+    tmp.replace(MIX_OUT)
+    print(f"  loudness {got:.1f} -> {safe:+.2f} dB")
+
+print(f"final {loud(MIX_OUT):.1f} LUFS, peak {peak(MIX_OUT):.1f} dBFS, {rdur(MIX_OUT):.3f}s")
+print("cuts at", ", ".join(f"{c:.3f}" for c in CUTS))

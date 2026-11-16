@@ -1,0 +1,432 @@
+[
+  {
+    "text": "Only",
+    "start": 0.05,
+    "end": 0.27
+  },
+  {
+    "text": "503",
+    "start": 0.38,
+    "end": 1.14
+  },
+  {
+    "text": "of",
+    "start": 1.15,
+    "end": 1.31
+  },
+  {
+    "text": "these",
+    "start": 1.32,
+    "end": 1.76
+  },
+  {
+    "text": "exist",
+    "start": 1.76,
+    "end": 2.03
+  },
+  {
+    "text": "because",
+    "start": 2.3,
+    "end": 2.67
+  },
+  {
+    "text": "NASCAR",
+    "start": 2.67,
+    "end": 3.03
+  },
+  {
+    "text": "said",
+    "start": 3.07,
+    "end": 3.29
+  },
+  {
+    "text": "build",
+    "start": 3.37,
+    "end": 3.71
+  },
+  {
+    "text": "500",
+    "start": 3.71,
+    "end": 4.31
+  },
+  {
+    "text": "or",
+    "start": 4.35,
+    "end": 4.5
+  },
+  {
+    "text": "stay",
+    "start": 4.5,
+    "end": 4.87
+  },
+  {
+    "text": "home.",
+    "start": 4.87,
+    "end": 5.24
+  },
+  {
+    "text": "So",
+    "start": 5.89,
+    "end": 5.98
+  },
+  {
+    "text": "Dodge",
+    "start": 5.98,
+    "end": 6.33
+  },
+  {
+    "text": "built",
+    "start": 6.33,
+    "end": 6.68
+  },
+  {
+    "text": "the",
+    "start": 6.68,
+    "end": 6.87
+  },
+  {
+    "text": "minimum,",
+    "start": 6.96,
+    "end": 7.51
+  },
+  {
+    "text": "then",
+    "start": 7.51,
+    "end": 7.8
+  },
+  {
+    "text": "hung",
+    "start": 7.8,
+    "end": 7.88
+  },
+  {
+    "text": "a",
+    "start": 8.14,
+    "end": 8.15
+  },
+  {
+    "text": "wing",
+    "start": 8.15,
+    "end": 8.43
+  },
+  {
+    "text": "on",
+    "start": 8.43,
+    "end": 8.57
+  },
+  {
+    "text": "the",
+    "start": 8.57,
+    "end": 8.78
+  },
+  {
+    "text": "trunk.",
+    "start": 8.78,
+    "end": 9.36
+  },
+  {
+    "text": "It",
+    "start": 9.41,
+    "end": 9.49
+  },
+  {
+    "text": "sat",
+    "start": 9.49,
+    "end": 9.63
+  },
+  {
+    "text": "23",
+    "start": 9.74,
+    "end": 10.1
+  },
+  {
+    "text": "inches",
+    "start": 10.1,
+    "end": 10.5
+  },
+  {
+    "text": "up",
+    "start": 10.51,
+    "end": 10.64
+  },
+  {
+    "text": "and",
+    "start": 10.64,
+    "end": 10.86
+  },
+  {
+    "text": "no,",
+    "start": 10.88,
+    "end": 11.15
+  },
+  {
+    "text": "that",
+    "start": 11.15,
+    "end": 11.39
+  },
+  {
+    "text": "was",
+    "start": 11.39,
+    "end": 11.66
+  },
+  {
+    "text": "not",
+    "start": 11.66,
+    "end": 11.84
+  },
+  {
+    "text": "so",
+    "start": 11.84,
+    "end": 12
+  },
+  {
+    "text": "the",
+    "start": 12,
+    "end": 12.18
+  },
+  {
+    "text": "trunk",
+    "start": 12.18,
+    "end": 12.49
+  },
+  {
+    "text": "would",
+    "start": 12.49,
+    "end": 12.8
+  },
+  {
+    "text": "open.",
+    "start": 12.8,
+    "end": 13.24
+  },
+  {
+    "text": "It",
+    "start": 13.29,
+    "end": 13.36
+  },
+  {
+    "text": "was",
+    "start": 13.36,
+    "end": 13.51
+  },
+  {
+    "text": "reaching",
+    "start": 13.62,
+    "end": 14.05
+  },
+  {
+    "text": "for",
+    "start": 14.05,
+    "end": 14.24
+  },
+  {
+    "text": "clean",
+    "start": 14.24,
+    "end": 14.55
+  },
+  {
+    "text": "air.",
+    "start": 14.55,
+    "end": 14.96
+  },
+  {
+    "text": "The",
+    "start": 15.01,
+    "end": 15.12
+  },
+  {
+    "text": "nose",
+    "start": 15.12,
+    "end": 15.23
+  },
+  {
+    "text": "came",
+    "start": 15.34,
+    "end": 15.53
+  },
+  {
+    "text": "to",
+    "start": 15.58,
+    "end": 15.67
+  },
+  {
+    "text": "a",
+    "start": 15.67,
+    "end": 15.72
+  },
+  {
+    "text": "point,",
+    "start": 15.72,
+    "end": 16.11
+  },
+  {
+    "text": "the",
+    "start": 16.11,
+    "end": 16.27
+  },
+  {
+    "text": "rear",
+    "start": 16.28,
+    "end": 16.5
+  },
+  {
+    "text": "window",
+    "start": 16.5,
+    "end": 16.83
+  },
+  {
+    "text": "went",
+    "start": 16.83,
+    "end": 16.99
+  },
+  {
+    "text": "flat",
+    "start": 17.26,
+    "end": 17.27
+  },
+  {
+    "text": "and",
+    "start": 17.27,
+    "end": 17.46
+  },
+  {
+    "text": "that",
+    "start": 17.51,
+    "end": 17.73
+  },
+  {
+    "text": "shape",
+    "start": 17.84,
+    "end": 18.09
+  },
+  {
+    "text": "hit",
+    "start": 18.09,
+    "end": 18.3
+  },
+  {
+    "text": "200",
+    "start": 18.3,
+    "end": 18.93
+  },
+  {
+    "text": "miles",
+    "start": 18.93,
+    "end": 19.28
+  },
+  {
+    "text": "per",
+    "start": 19.28,
+    "end": 19.44
+  },
+  {
+    "text": "hour.",
+    "start": 19.49,
+    "end": 20
+  },
+  {
+    "text": "Then",
+    "start": 20.05,
+    "end": 20.27
+  },
+  {
+    "text": "the",
+    "start": 20.38,
+    "end": 20.56
+  },
+  {
+    "text": "cars",
+    "start": 20.56,
+    "end": 20.87
+  },
+  {
+    "text": "sat",
+    "start": 20.88,
+    "end": 21.03
+  },
+  {
+    "text": "unsold",
+    "start": 21.12,
+    "end": 21.59
+  },
+  {
+    "text": "on",
+    "start": 21.59,
+    "end": 21.75
+  },
+  {
+    "text": "dealer",
+    "start": 21.75,
+    "end": 22.03
+  },
+  {
+    "text": "lots.",
+    "start": 22.3,
+    "end": 22.8
+  },
+  {
+    "text": "Would",
+    "start": 22.85,
+    "end": 23.07
+  },
+  {
+    "text": "you",
+    "start": 23.18,
+    "end": 23.28
+  },
+  {
+    "text": "drive",
+    "start": 23.28,
+    "end": 23.57
+  },
+  {
+    "text": "a",
+    "start": 23.58,
+    "end": 23.64
+  },
+  {
+    "text": "car",
+    "start": 23.64,
+    "end": 23.82
+  },
+  {
+    "text": "built",
+    "start": 23.82,
+    "end": 24.11
+  },
+  {
+    "text": "to",
+    "start": 24.12,
+    "end": 24.24
+  },
+  {
+    "text": "beat",
+    "start": 24.24,
+    "end": 24.47
+  },
+  {
+    "text": "a",
+    "start": 24.49,
+    "end": 24.54
+  },
+  {
+    "text": "rule?",
+    "start": 24.54,
+    "end": 24.84
+  },
+  {
+    "text": "Tell",
+    "start": 25.05,
+    "end": 25.27
+  },
+  {
+    "text": "me",
+    "start": 25.38,
+    "end": 25.45
+  },
+  {
+    "text": "below.",
+    "start": 25.45,
+    "end": 25.84
+  }
+]

@@ -1,0 +1,402 @@
+[
+  {
+    "text": "BMW",
+    "start": 0.05,
+    "end": 0.24
+  },
+  {
+    "text": "built",
+    "start": 0.24,
+    "end": 0.63
+  },
+  {
+    "text": "this",
+    "start": 0.63,
+    "end": 0.92
+  },
+  {
+    "text": "car",
+    "start": 0.97,
+    "end": 1.18
+  },
+  {
+    "text": "to",
+    "start": 1.18,
+    "end": 1.32
+  },
+  {
+    "text": "go",
+    "start": 1.35,
+    "end": 1.5
+  },
+  {
+    "text": "racing.",
+    "start": 1.5,
+    "end": 2.22
+  },
+  {
+    "text": "The",
+    "start": 2.22,
+    "end": 2.35
+  },
+  {
+    "text": "rules",
+    "start": 2.35,
+    "end": 2.53
+  },
+  {
+    "text": "changed",
+    "start": 2.59,
+    "end": 2.88
+  },
+  {
+    "text": "before",
+    "start": 2.88,
+    "end": 3.13
+  },
+  {
+    "text": "the",
+    "start": 3.13,
+    "end": 3.24
+  },
+  {
+    "text": "first",
+    "start": 3.34,
+    "end": 3.46
+  },
+  {
+    "text": "one",
+    "start": 3.46,
+    "end": 3.6
+  },
+  {
+    "text": "was",
+    "start": 3.6,
+    "end": 3.76
+  },
+  {
+    "text": "done.",
+    "start": 3.76,
+    "end": 4.32
+  },
+  {
+    "text": "They",
+    "start": 4.48,
+    "end": 4.52
+  },
+  {
+    "text": "needed",
+    "start": 4.57,
+    "end": 4.89
+  },
+  {
+    "text": "400",
+    "start": 4.89,
+    "end": 5.44
+  },
+  {
+    "text": "road",
+    "start": 5.49,
+    "end": 5.7
+  },
+  {
+    "text": "cars",
+    "start": 5.7,
+    "end": 5.95
+  },
+  {
+    "text": "to",
+    "start": 5.95,
+    "end": 6.07
+  },
+  {
+    "text": "qualify,",
+    "start": 6.07,
+    "end": 6.62
+  },
+  {
+    "text": "so",
+    "start": 6.72,
+    "end": 6.74
+  },
+  {
+    "text": "they",
+    "start": 6.74,
+    "end": 6.99
+  },
+  {
+    "text": "hired",
+    "start": 6.99,
+    "end": 7.3
+  },
+  {
+    "text": "Lamborghini.",
+    "start": 7.3,
+    "end": 8.22
+  },
+  {
+    "text": "And",
+    "start": 8.22,
+    "end": 8.28
+  },
+  {
+    "text": "Lamborghini",
+    "start": 8.35,
+    "end": 8.88
+  },
+  {
+    "text": "ran",
+    "start": 9,
+    "end": 9.02
+  },
+  {
+    "text": "out",
+    "start": 9.02,
+    "end": 9.15
+  },
+  {
+    "text": "of",
+    "start": 9.16,
+    "end": 9.26
+  },
+  {
+    "text": "cash,",
+    "start": 9.38,
+    "end": 9.88
+  },
+  {
+    "text": "seven",
+    "start": 9.93,
+    "end": 10.22
+  },
+  {
+    "text": "prototypes",
+    "start": 10.22,
+    "end": 10.91
+  },
+  {
+    "text": "in.",
+    "start": 10.91,
+    "end": 11.28
+  },
+  {
+    "text": "So",
+    "start": 11.28,
+    "end": 11.41
+  },
+  {
+    "text": "every",
+    "start": 11.41,
+    "end": 11.64
+  },
+  {
+    "text": "car",
+    "start": 11.64,
+    "end": 12.08
+  },
+  {
+    "text": "crossed",
+    "start": 12.08,
+    "end": 12.42
+  },
+  {
+    "text": "the",
+    "start": 12.47,
+    "end": 12.63
+  },
+  {
+    "text": "Alps.",
+    "start": 12.63,
+    "end": 13.12
+  },
+  {
+    "text": "Italian",
+    "start": 13.22,
+    "end": 13.36
+  },
+  {
+    "text": "body,",
+    "start": 13.43,
+    "end": 13.6
+  },
+  {
+    "text": "Italian",
+    "start": 13.6,
+    "end": 13.91
+  },
+  {
+    "text": "frame",
+    "start": 13.91,
+    "end": 14.36
+  },
+  {
+    "text": "finished",
+    "start": 14.36,
+    "end": 14.76
+  },
+  {
+    "text": "in",
+    "start": 14.81,
+    "end": 14.9
+  },
+  {
+    "text": "Stuttgart.",
+    "start": 14.9,
+    "end": 15.74
+  },
+  {
+    "text": "It",
+    "start": 15.74,
+    "end": 15.88
+  },
+  {
+    "text": "still",
+    "start": 15.88,
+    "end": 16.23
+  },
+  {
+    "text": "made",
+    "start": 16.23,
+    "end": 16.5
+  },
+  {
+    "text": "277",
+    "start": 16.5,
+    "end": 17.14
+  },
+  {
+    "text": "horsepower",
+    "start": 17.14,
+    "end": 17.78
+  },
+  {
+    "text": "and",
+    "start": 17.86,
+    "end": 18
+  },
+  {
+    "text": "160",
+    "start": 18.1,
+    "end": 18.68
+  },
+  {
+    "text": "miles",
+    "start": 18.68,
+    "end": 18.8
+  },
+  {
+    "text": "an",
+    "start": 18.8,
+    "end": 19.24
+  },
+  {
+    "text": "hour.",
+    "start": 19.24,
+    "end": 19.72
+  },
+  {
+    "text": "They",
+    "start": 19.72,
+    "end": 19.98
+  },
+  {
+    "text": "built",
+    "start": 19.98,
+    "end": 20.27
+  },
+  {
+    "text": "453",
+    "start": 20.35,
+    "end": 20.91
+  },
+  {
+    "text": "then",
+    "start": 20.91,
+    "end": 21.2
+  },
+  {
+    "text": "made",
+    "start": 21.25,
+    "end": 21.4
+  },
+  {
+    "text": "a",
+    "start": 21.41,
+    "end": 21.46
+  },
+  {
+    "text": "series",
+    "start": 21.46,
+    "end": 21.74
+  },
+  {
+    "text": "where",
+    "start": 21.79,
+    "end": 22.04
+  },
+  {
+    "text": "it",
+    "start": 22.04,
+    "end": 22.12
+  },
+  {
+    "text": "could",
+    "start": 22.17,
+    "end": 22.39
+  },
+  {
+    "text": "only",
+    "start": 22.44,
+    "end": 22.61
+  },
+  {
+    "text": "race",
+    "start": 22.61,
+    "end": 22.81
+  },
+  {
+    "text": "itself.",
+    "start": 22.82,
+    "end": 23.36
+  },
+  {
+    "text": "The",
+    "start": 23.4,
+    "end": 23.52
+  },
+  {
+    "text": "car",
+    "start": 23.52,
+    "end": 23.67
+  },
+  {
+    "text": "wasn't",
+    "start": 23.68,
+    "end": 23.99
+  },
+  {
+    "text": "the",
+    "start": 23.99,
+    "end": 24.1
+  },
+  {
+    "text": "failure.",
+    "start": 24.18,
+    "end": 24.68
+  },
+  {
+    "text": "The",
+    "start": 24.68,
+    "end": 24.84
+  },
+  {
+    "text": "plan",
+    "start": 24.84,
+    "end": 25.05
+  },
+  {
+    "text": "was.",
+    "start": 25.05,
+    "end": 25.24
+  }
+]

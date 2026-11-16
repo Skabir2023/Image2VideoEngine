@@ -1,0 +1,13 @@
+{
+ "engine": "google-flow/flow-mcp",
+ "prompt": "Create one photorealistic photograph, vertical portrait 9:16: 1969 Dodge Charger Daytona coupe, bright red paint, black vinyl roof, pointed sheet-metal nose cone with exposed round headlights, black mesh grille, flush rear window, 23-inch rear wing on tall black struts, black steel wheels with chrome hubcaps, black vinyl interior. Every prompt opens with `Create one photorealistic photograph, vertical portrait 9:16: ` + the identity block verbatim, and closes with `empty concrete studio, golden hour light, 35mm, no people, no animals, no text, no watermark`.. Interior through the open door: black vinyl buckets, three-spoke wheel, round gauges. empty concrete studio, golden hour light, 35mm, no people, no animals, no text, no watermark.",
+ "source_file": "/home/openclaw/flow-mcp-out/1969-dodge-charger-daytona-plates/scene-05.jpeg",
+ "size": [
+  1080,
+  1920
+ ],
+ "files": [
+  "07_interior.png"
+ ],
+ "at": "2026-11-15T03:46:07"
+}

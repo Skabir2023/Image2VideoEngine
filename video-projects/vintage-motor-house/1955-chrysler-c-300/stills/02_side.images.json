@@ -1,0 +1,17 @@
+{
+ "engine": "meta-ai/browser-mcp",
+ "prompt": "Create one photorealistic photograph, vertical portrait 9:16: 1955 Chrysler C-300 two-door hardtop coupe, Tango red body with a white roof, wide chrome egg-crate Imperial grille, single round headlights in heavy chrome bezels, chrome bumpers with bullet tips, small gold C-300 script badge on the front fender, tan leather bench interior, Kelsey-Hayes chrome wire wheels with whitewall tires. Parked on a lawn, photographed square from the side at a little distance, the whole car in one frame with its nose to the left, camera at door-handle height, both wire wheels and the full roofline visible, no other vehicle in the frame, on a wide open park lawn under mature trees, warm afternoon light. restored to showroom condition, glass-glossy paint with deep mirror reflections, spotless chrome and trim, clean tyres, every panel polished, rich saturated colour, bright clean light, 35mm, no people, no animals, no text, no watermark.",
+ "source": [
+  1152,
+  2048
+ ],
+ "size": [
+  1080,
+  1920
+ ],
+ "files": [
+  "02_side.png"
+ ],
+ "scene": "\"America's most powerful car in 1955\"",
+ "at": "2026-11-16T14:31:45"
+}

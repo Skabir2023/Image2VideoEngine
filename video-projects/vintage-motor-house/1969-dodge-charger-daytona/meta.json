@@ -1,0 +1,38 @@
+{
+  "project": "Vintage Motor House",
+  "slug": "vintage-motor-house",
+  "film": "The Most Imposing 1969 Dodge Charger Daytona Ever Built",
+  "id": "daytona-reel",
+  "status": "built 2026-11-15",
+  "social": {
+    "platform": "facebook",
+    "account": "Vintage Motor House"
+  },
+  "output": "The Most Imposing 1969 Dodge Charger Daytona Ever Built",
+  "width": 1080,
+  "height": 1920,
+  "fps": 60,
+  "duration": 30.0,
+  "scenes": [
+    "s01-hero",
+    "s02-side",
+    "s03-rear",
+    "s04-wing",
+    "s05-strut",
+    "s06-tail",
+    "s07-nose",
+    "s08-window",
+    "s09-engine",
+    "s10-steering",
+    "s11-wheel",
+    "s12-close",
+    "s13-badge",
+    "s14-bookend"
+  ],
+  "source": {
+    "engine": "meta-ai/browser-mcp",
+    "voice": "am_adam",
+    "angle": "Secret Story",
+    "score": 88
+  }
+}

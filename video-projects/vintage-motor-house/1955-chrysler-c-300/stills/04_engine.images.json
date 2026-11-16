@@ -1,0 +1,17 @@
+{
+ "engine": "meta-ai/browser-mcp",
+ "prompt": "Create one photorealistic photograph, vertical portrait 9:16: 1955 Chrysler C-300 two-door hardtop coupe, Tango red body with a white roof, wide chrome egg-crate Imperial grille, single round headlights in heavy chrome bezels, chrome bumpers with bullet tips, small gold C-300 script badge on the front fender, tan leather bench interior, Kelsey-Hayes chrome wire wheels with whitewall tires. Interior through the open door: tan leather bench seat, wide white two-spoke steering wheel, chrome dash with round gauges, floor-mounted PowerFlite selector lever, on a quiet boulevard lined with palms, bright late-afternoon sun. restored to showroom condition, glass-glossy paint with deep mirror reflections, spotless chrome and trim, clean tyres, every panel polished, rich saturated colour, bright clean light, 35mm, no people, no animals, no text, no watermark.",
+ "source": [
+  1152,
+  2048
+ ],
+ "size": [
+  1080,
+  1920
+ ],
+ "files": [
+  "05_interior.png"
+ ],
+ "scene": "\"Chrysler named the car after its own horsepower\"",
+ "at": "2026-11-16T14:26:43"
+}

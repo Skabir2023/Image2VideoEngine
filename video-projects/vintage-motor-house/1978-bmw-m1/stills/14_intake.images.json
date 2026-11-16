@@ -1,0 +1,14 @@
+{
+ "engine": "google-flow/flow-mcp",
+ "model": "Nano Banana 2.1 (upscaled 1536x2752)",
+ "prompt": "Create one photorealistic photograph, vertical portrait 9:16: 1978 BMW M1 coupe (E26) by Giugiaro, bright solid guards-red paint, low wedge body with a wide flat nose, black slatted grille between twin rectangular headlights under clear covers, a single blue-and-white BMW roundel on the nose and another on the tail panel, black louvred engine cover behind the cabin, silver Campagnolo five-spoke alloy wheels with wide low-profile tyres, grey cloth and black cockpit with a three-spoke wheel and twin round gauges, no racing livery, no stripes on the body. Every prompt opens with `Create one photorealistic photograph, vertical portrait 9:16: ` + the identity block verbatim, and closes with `empty concrete studio, golden hour light, 35mm, no people, no animals, no text, no watermark`. The badge plates say so explicitly in their own framing clause: the roundel is the car's own emblem, sharp, and nothing else is written anywhere.. Macro of the front air intake in the nose and the indicator beside it, black mesh deep and sharp, red paint above. empty concrete studio, golden hour light, 35mm, no people, no animals, no text, no watermark.",
+ "source_file": "/home/openclaw/flow-mcp-out/1978-bmw-m1-plates/clip-15.jpeg",
+ "size": [
+  1080,
+  1920
+ ],
+ "files": [
+  "14_intake.png"
+ ],
+ "at": "2026-11-15T05:38:46"
+}

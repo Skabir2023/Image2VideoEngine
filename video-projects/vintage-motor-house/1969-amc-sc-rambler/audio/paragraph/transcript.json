@@ -1,0 +1,277 @@
+[
+  {
+    "text": "AMC",
+    "start": 0.05,
+    "end": 0.29
+  },
+  {
+    "text": "never",
+    "start": 0.29,
+    "end": 0.69
+  },
+  {
+    "text": "set",
+    "start": 0.83,
+    "end": 1.07
+  },
+  {
+    "text": "out",
+    "start": 1.07,
+    "end": 1.36
+  },
+  {
+    "text": "to",
+    "start": 1.36,
+    "end": 1.54
+  },
+  {
+    "text": "build",
+    "start": 1.55,
+    "end": 2.04
+  },
+  {
+    "text": "a",
+    "start": 2.04,
+    "end": 2.14
+  },
+  {
+    "text": "muscle",
+    "start": 2.14,
+    "end": 2.49
+  },
+  {
+    "text": "car.",
+    "start": 2.49,
+    "end": 3.13
+  },
+  {
+    "text": "Racing",
+    "start": 3.13,
+    "end": 3.61
+  },
+  {
+    "text": "Rules",
+    "start": 3.61,
+    "end": 4.05
+  },
+  {
+    "text": "said",
+    "start": 4.05,
+    "end": 4.4
+  },
+  {
+    "text": "500",
+    "start": 4.4,
+    "end": 5.19
+  },
+  {
+    "text": "identical",
+    "start": 5.19,
+    "end": 5.57
+  },
+  {
+    "text": "cars,",
+    "start": 6.2,
+    "end": 6.36
+  },
+  {
+    "text": "so",
+    "start": 6.41,
+    "end": 6.56
+  },
+  {
+    "text": "it",
+    "start": 6.56,
+    "end": 6.76
+  },
+  {
+    "text": "dropped",
+    "start": 6.76,
+    "end": 7.47
+  },
+  {
+    "text": "a",
+    "start": 7.47,
+    "end": 7.56
+  },
+  {
+    "text": "315-horse",
+    "start": 7.56,
+    "end": 8.85
+  },
+  {
+    "text": "390",
+    "start": 9.48,
+    "end": 10.04
+  },
+  {
+    "text": "into",
+    "start": 10.04,
+    "end": 10.26
+  },
+  {
+    "text": "a",
+    "start": 10.26,
+    "end": 10.31
+  },
+  {
+    "text": "two-door",
+    "start": 10.31,
+    "end": 10.75
+  },
+  {
+    "text": "rambler.",
+    "start": 10.75,
+    "end": 11.36
+  },
+  {
+    "text": "It",
+    "start": 11.36,
+    "end": 11.67
+  },
+  {
+    "text": "cost",
+    "start": 11.67,
+    "end": 12.22
+  },
+  {
+    "text": "$2,998.",
+    "start": 12.22,
+    "end": 14.84
+  },
+  {
+    "text": "It",
+    "start": 14.89,
+    "end": 15.01
+  },
+  {
+    "text": "hit",
+    "start": 15.01,
+    "end": 15.27
+  },
+  {
+    "text": "60",
+    "start": 15.27,
+    "end": 15.8
+  },
+  {
+    "text": "in",
+    "start": 15.8,
+    "end": 15.97
+  },
+  {
+    "text": "6.3.",
+    "start": 15.97,
+    "end": 17.06
+  },
+  {
+    "text": "Then",
+    "start": 17.13,
+    "end": 17.58
+  },
+  {
+    "text": "AMC",
+    "start": 17.58,
+    "end": 17.96
+  },
+  {
+    "text": "built",
+    "start": 17.96,
+    "end": 18.54
+  },
+  {
+    "text": "1,512.",
+    "start": 18.62,
+    "end": 20.76
+  },
+  {
+    "text": "That",
+    "start": 20.81,
+    "end": 21.03
+  },
+  {
+    "text": "is",
+    "start": 21.03,
+    "end": 21.16
+  },
+  {
+    "text": "three",
+    "start": 21.16,
+    "end": 21.45
+  },
+  {
+    "text": "times",
+    "start": 21.59,
+    "end": 21.84
+  },
+  {
+    "text": "what",
+    "start": 21.84,
+    "end": 22.11
+  },
+  {
+    "text": "the",
+    "start": 22.11,
+    "end": 22.3
+  },
+  {
+    "text": "rule",
+    "start": 22.31,
+    "end": 22.58
+  },
+  {
+    "text": "demanded",
+    "start": 22.58,
+    "end": 23.16
+  },
+  {
+    "text": "and",
+    "start": 23.16,
+    "end": 23.29
+  },
+  {
+    "text": "stopped.",
+    "start": 23.83,
+    "end": 24.04
+  },
+  {
+    "text": "Would",
+    "start": 24.09,
+    "end": 24.31
+  },
+  {
+    "text": "you",
+    "start": 24.31,
+    "end": 24.47
+  },
+  {
+    "text": "take",
+    "start": 24.47,
+    "end": 24.69
+  },
+  {
+    "text": "the",
+    "start": 24.69,
+    "end": 24.73
+  },
+  {
+    "text": "bargain",
+    "start": 24.87,
+    "end": 25.24
+  },
+  {
+    "text": "or",
+    "start": 25.24,
+    "end": 25.35
+  },
+  {
+    "text": "the",
+    "start": 25.35,
+    "end": 25.5
+  },
+  {
+    "text": "badge?",
+    "start": 25.58,
+    "end": 26
+  }
+]

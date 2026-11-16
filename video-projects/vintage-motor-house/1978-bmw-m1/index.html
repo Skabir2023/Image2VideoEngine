@@ -1,0 +1,78 @@
+<!doctype html>
+<!-- The 1978 BMW M1 That Missed Its Own Race — master timeline. 16 scenes, 1800 frames = 30.000 s at 60 fps.
+     Written by tools/scene_builder.py from scenes.py, so the layers can never drift from the scenes. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 1978 BMW M1 That Missed Its Own Race</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; width: 1080px; height: 1920px; overflow: hidden; background: #050506; }
+  #master { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+  .comp-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="master" data-composition-id="m1-reel" data-start="0" data-duration="30.000000"
+     data-width="1080" data-height="1920">
+
+  <audio id="master-mix" src="audio/final-audio.wav" data-start="0" data-duration="30.000000"
+         data-track-index="20" data-volume="1"></audio>
+
+  <div id="layer-01" class="comp-layer" data-composition-id="s01-hero"
+       data-composition-src="compositions/s01-hero.html"
+       data-start="0.000000" data-duration="2.966667" data-track-index="1"></div>
+  <div id="layer-02" class="comp-layer" data-composition-id="s02-side"
+       data-composition-src="compositions/s02-side.html"
+       data-start="2.966667" data-duration="2.166667" data-track-index="2"></div>
+  <div id="layer-03" class="comp-layer" data-composition-id="s03-rear"
+       data-composition-src="compositions/s03-rear.html"
+       data-start="5.133333" data-duration="2.200000" data-track-index="3"></div>
+  <div id="layer-04" class="comp-layer" data-composition-id="s04-engine"
+       data-composition-src="compositions/s04-engine.html"
+       data-start="7.333333" data-duration="1.550000" data-track-index="4"></div>
+  <div id="layer-05" class="comp-layer" data-composition-id="s05-interior"
+       data-composition-src="compositions/s05-interior.html"
+       data-start="8.883333" data-duration="1.550000" data-track-index="5"></div>
+  <div id="layer-06" class="comp-layer" data-composition-id="s06-wheel"
+       data-composition-src="compositions/s06-wheel.html"
+       data-start="10.433333" data-duration="1.300000" data-track-index="6"></div>
+  <div id="layer-07" class="comp-layer" data-composition-id="s07-roundel-front"
+       data-composition-src="compositions/s07-roundel-front.html"
+       data-start="11.733333" data-duration="1.483333" data-track-index="7"></div>
+  <div id="layer-08" class="comp-layer" data-composition-id="s08-roundel-rear"
+       data-composition-src="compositions/s08-roundel-rear.html"
+       data-start="13.216667" data-duration="1.000000" data-track-index="8"></div>
+  <div id="layer-09" class="comp-layer" data-composition-id="s09-headlight"
+       data-composition-src="compositions/s09-headlight.html"
+       data-start="14.216667" data-duration="0.983333" data-track-index="9"></div>
+  <div id="layer-10" class="comp-layer" data-composition-id="s10-steering"
+       data-composition-src="compositions/s10-steering.html"
+       data-start="15.200000" data-duration="1.033333" data-track-index="10"></div>
+  <div id="layer-11" class="comp-layer" data-composition-id="s11-exhaust"
+       data-composition-src="compositions/s11-exhaust.html"
+       data-start="16.233333" data-duration="2.466667" data-track-index="11"></div>
+  <div id="layer-12" class="comp-layer" data-composition-id="s12-louvres"
+       data-composition-src="compositions/s12-louvres.html"
+       data-start="18.700000" data-duration="2.050000" data-track-index="12"></div>
+  <div id="layer-13" class="comp-layer" data-composition-id="s13-mirror"
+       data-composition-src="compositions/s13-mirror.html"
+       data-start="20.750000" data-duration="3.383333" data-track-index="13"></div>
+  <div id="layer-14" class="comp-layer" data-composition-id="s14-intake"
+       data-composition-src="compositions/s14-intake.html"
+       data-start="24.133333" data-duration="1.283333" data-track-index="14"></div>
+  <div id="layer-15" class="comp-layer" data-composition-id="s15-night"
+       data-composition-src="compositions/s15-night.html"
+       data-start="25.416667" data-duration="2.983333" data-track-index="15"></div>
+  <div id="layer-16" class="comp-layer" data-composition-id="s16-tail"
+       data-composition-src="compositions/s16-tail.html"
+       data-start="28.400000" data-duration="1.600000" data-track-index="16"></div>
+</div>
+
+<script>
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines['m1-reel'] = tl;
+</script>
+</body></html>

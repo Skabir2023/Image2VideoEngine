@@ -1,0 +1,29 @@
+{
+  "project": "Vintage Motor House",
+  "slug": "vintage-motor-house",
+  "film": "1969 AMC SC-Rambler - 1,512 Cars for a 500-Car Rule",
+  "id": "scrambler-reel",
+  "status": "built 2026-11-16",
+  "social": {
+    "platform": "facebook",
+    "account": "Vintage Motor House"
+  },
+  "output": "1969 AMC SC-Rambler - 1,512 Cars for a 500-Car Rule",
+  "width": 1080,
+  "height": 1920,
+  "fps": 60,
+  "duration": 30.0,
+  "scenes": [
+    "s01-hero",
+    "s02-side",
+    "s03-rear",
+    "s04-engine",
+    "s05-scoop",
+    "s06-interior",
+    "s07-wheel",
+    "s08-tail",
+    "s09-tach",
+    "s10-headlight",
+    "s11-shifter"
+  ]
+}

@@ -1,0 +1,57 @@
+[
+ {
+  "shot": "01_hero_front34.png",
+  "status": "error",
+  "reason": "\u2717 step 1: eval \"() => { const b=document.querySelector('button[aria-label*=New chat]'); if(b){ b.click(); return 1 } return 0 }\" \u2014 SyntaxError: Failed to execute 'querySelector' on 'Document': 'button[aria-label*=New chat]' is not a valid selector.\nPage: https://www.meta.ai/prompt/927a168d-5f79-446c-8ae3-ecd6b919919f \u2014 \"Meta AI - Your AI Assistant for Images, Shopping and More\""
+ },
+ {
+  "shot": "02_side.png",
+  "status": "error",
+  "reason": "\u2717 step 1: eval \"() => { const b=document.querySelector('button[aria-label*=New chat]'); if(b){ b.click(); return 1 } return 0 }\" \u2014 SyntaxError: Failed to execute 'querySelector' on 'Document': 'button[aria-label*=New chat]' is not a valid selector.\nPage: https://www.meta.ai/prompt/927a168d-5f79-446c-8ae3-ecd6b919919f \u2014 \"Meta AI - Your AI Assistant for Images, Shopping and More\""
+ },
+ {
+  "shot": "03_rear34.png",
+  "status": "error",
+  "reason": "\u2717 step 1: eval \"() => { const b=document.querySelector('button[aria-label*=New chat]'); if(b){ b.click(); return 1 } return 0 }\" \u2014 SyntaxError: Failed to execute 'querySelector' on 'Document': 'button[aria-label*=New chat]' is not a valid selector.\nPage: https://www.meta.ai/prompt/927a168d-5f79-446c-8ae3-ecd6b919919f \u2014 \"Meta AI - Your AI Assistant for Images, Shopping and More\""
+ },
+ {
+  "shot": "04_wing.png",
+  "status": "error",
+  "reason": "\u2717 step 1: eval \"() => { const b=document.querySelector('button[aria-label*=New chat]'); if(b){ b.click(); return 1 } return 0 }\" \u2014 SyntaxError: Failed to execute 'querySelector' on 'Document': 'button[aria-label*=New chat]' is not a valid selector.\nPage: https://www.meta.ai/prompt/927a168d-5f79-446c-8ae3-ecd6b919919f \u2014 \"Meta AI - Your AI Assistant for Images, Shopping and More\""
+ },
+ {
+  "shot": "05_nose.png",
+  "status": "error",
+  "reason": "\u2717 step 1: eval \"() => { const b=document.querySelector('button[aria-label*=New chat]'); if(b){ b.click(); return 1 } return 0 }\" \u2014 SyntaxError: Failed to execute 'querySelector' on 'Document': 'button[aria-label*=New chat]' is not a valid selector.\nPage: https://www.meta.ai/prompt/927a168d-5f79-446c-8ae3-ecd6b919919f \u2014 \"Meta AI - Your AI Assistant for Images, Shopping and More\""
+ },
+ {
+  "shot": "06_engine.png",
+  "status": "error",
+  "reason": "\u2717 step 1: eval \"() => { const b=document.querySelector('button[aria-label*=New chat]'); if(b){ b.click(); return 1 } return 0 }\" \u2014 SyntaxError: Failed to execute 'querySelector' on 'Document': 'button[aria-label*=New chat]' is not a valid selector.\nPage: https://www.meta.ai/prompt/927a168d-5f79-446c-8ae3-ecd6b919919f \u2014 \"Meta AI - Your AI Assistant for Images, Shopping and More\""
+ },
+ {
+  "shot": "07_interior.png",
+  "status": "error",
+  "reason": "\u2717 step 1: eval \"() => { const b=document.querySelector('button[aria-label*=New chat]'); if(b){ b.click(); return 1 } return 0 }\" \u2014 SyntaxError: Failed to execute 'querySelector' on 'Document': 'button[aria-label*=New chat]' is not a valid selector.\nPage: https://www.meta.ai/prompt/927a168d-5f79-446c-8ae3-ecd6b919919f \u2014 \"Meta AI - Your AI Assistant for Images, Shopping and More\""
+ },
+ {
+  "shot": "08_wheel.png",
+  "status": "error",
+  "reason": "\u2717 step 1: eval \"() => { const b=document.querySelector('button[aria-label*=New chat]'); if(b){ b.click(); return 1 } return 0 }\" \u2014 SyntaxError: Failed to execute 'querySelector' on 'Document': 'button[aria-label*=New chat]' is not a valid selector.\nPage: https://www.meta.ai/prompt/927a168d-5f79-446c-8ae3-ecd6b919919f \u2014 \"Meta AI - Your AI Assistant for Images, Shopping and More\""
+ },
+ {
+  "shot": "09_rearwindow.png",
+  "status": "error",
+  "reason": "\u2717 step 1: eval \"() => { const b=document.querySelector('button[aria-label*=New chat]'); if(b){ b.click(); return 1 } return 0 }\" \u2014 SyntaxError: Failed to execute 'querySelector' on 'Document': 'button[aria-label*=New chat]' is not a valid selector.\nPage: https://www.meta.ai/prompt/927a168d-5f79-446c-8ae3-ecd6b919919f \u2014 \"Meta AI - Your AI Assistant for Images, Shopping and More\""
+ },
+ {
+  "shot": "10_tail.png",
+  "status": "error",
+  "reason": "\u2717 step 1: eval \"() => { const b=document.querySelector('button[aria-label*=New chat]'); if(b){ b.click(); return 1 } return 0 }\" \u2014 SyntaxError: Failed to execute 'querySelector' on 'Document': 'button[aria-label*=New chat]' is not a valid selector.\nPage: https://www.meta.ai/prompt/927a168d-5f79-446c-8ae3-ecd6b919919f \u2014 \"Meta AI - Your AI Assistant for Images, Shopping and More\""
+ },
+ {
+  "shot": "11_closing.png",
+  "status": "error",
+  "reason": "\u2717 step 1: eval \"() => { const b=document.querySelector('button[aria-label*=New chat]'); if(b){ b.click(); return 1 } return 0 }\" \u2014 SyntaxError: Failed to execute 'querySelector' on 'Document': 'button[aria-label*=New chat]' is not a valid selector.\nPage: https://www.meta.ai/prompt/927a168d-5f79-446c-8ae3-ecd6b919919f \u2014 \"Meta AI - Your AI Assistant for Images, Shopping and More\""
+ }
+]

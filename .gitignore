@@ -28,12 +28,14 @@ video-projects/*/*/audio/final-voice.wav
 video-projects/*/*/audio/final-cta.wav
 video-projects/*/*/audio/paragraph/*-prev.wav
 
-# Operational state — the queue and ledger are rewritten by the tools
-video-projects/*/data.csv
-video-projects/*/uploaded.csv
+# Operational state — the queue and ledger are rewritten by tools/publish.py.
+# They ARE versioned: a fresh clone must continue this page's history, not start a
+# second one, and uploaded.csv is what stops a film going out twice. A run leaves
+# them modified, so commit them with the rest of the work.
 
-# Workbooks — binary, rewritten in place by tools/excel.py
-video-projects/*/*.xlsx
+# The page's workbooks are versioned for the same reason — they are the calendar
+# that says which cars are used and which angle is due. Only the tool's local
+# backups stay behind (they are copies, not the calendar).
 video-projects/*/backup/
 
 # Environment / secrets

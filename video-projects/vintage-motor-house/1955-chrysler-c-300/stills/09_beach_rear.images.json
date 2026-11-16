@@ -1,0 +1,17 @@
+{
+ "engine": "meta-ai/browser-mcp",
+ "prompt": "Create one photorealistic photograph, vertical portrait 9:16: 1955 Chrysler C-300 two-door hardtop coupe, Tango red body with a white roof, wide chrome egg-crate Imperial grille, single round headlights in heavy chrome bezels, chrome bumpers with bullet tips, small gold C-300 script badge on the front fender, tan leather bench interior, Kelsey-Hayes chrome wire wheels with whitewall tires. Hood lifted, engine bay filling the frame: 331 Hemi V8 with the bat-wing air cleaner and two four-barrel carburetors on a single intake, on a clean concrete forecourt under a deep blue sky, bright midday sun. restored to showroom condition, glass-glossy paint with deep mirror reflections, spotless chrome and trim, clean tyres, every panel polished, rich saturated colour, bright clean light, 35mm, no people, no animals, no text, no watermark.",
+ "source": [
+  1152,
+  2048
+ ],
+ "size": [
+  1080,
+  1920
+ ],
+ "files": [
+  "04_engine.png"
+ ],
+ "scene": "\"At Daytona it hit 127\"",
+ "at": "2026-11-16T14:26:39"
+}

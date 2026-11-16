@@ -1,0 +1,40 @@
+{
+  "project": "Vintage Motor House",
+  "slug": "vintage-motor-house",
+  "film": "The 1978 BMW M1 That Missed Its Own Race",
+  "id": "m1-reel",
+  "status": "built 2026-11-15",
+  "social": {
+    "platform": "facebook",
+    "account": "Vintage Motor House"
+  },
+  "output": "The 1978 BMW M1 That Missed Its Own Race",
+  "width": 1080,
+  "height": 1920,
+  "fps": 60,
+  "duration": 30.0,
+  "scenes": [
+    "s01-hero",
+    "s02-side",
+    "s03-rear",
+    "s04-engine",
+    "s05-interior",
+    "s06-wheel",
+    "s07-roundel-front",
+    "s08-roundel-rear",
+    "s09-headlight",
+    "s10-steering",
+    "s11-exhaust",
+    "s12-louvres",
+    "s13-mirror",
+    "s14-intake",
+    "s15-night",
+    "s16-tail"
+  ],
+  "source": {
+    "engine": "google-flow/flow-mcp",
+    "voice": "am_adam",
+    "angle": "Why It Failed",
+    "score": 90
+  }
+}

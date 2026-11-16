@@ -1,0 +1,17 @@
+{
+ "engine": "meta-ai/browser-mcp",
+ "prompt": "Create one photorealistic photograph, vertical portrait 9:16: 1969 AMC Hurst SC/Rambler two-door hardtop, white body with red and blue racing stripes over the hood and roof, black grille, large ram-air hood scoop, chrome bumpers, Magnum 500 wheels, blackwall tires, gray vinyl bucket seats, Hurst T-handle shifter. Low front close-up of the ram-air hood scoop and black grille, red and blue stripes. empty concrete studio, golden hour light, 35mm, no people, no animals, no text, no watermark.",
+ "source": [
+  1152,
+  2048
+ ],
+ "size": [
+  1080,
+  1920
+ ],
+ "files": [
+  "07_scoop.png"
+ ],
+ "scene": "s07",
+ "at": "2026-11-16T03:56:28"
+}

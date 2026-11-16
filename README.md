@@ -50,6 +50,23 @@ npm run check -- "$FILM/renders/1969 Ford Mustang Boss 429 - Rarest.mp4"
 
 `npm run render` reads the film's `meta.json`, so it works for any film folder without edits.
 
+## Starting on another computer
+
+The repo carries everything that is not generated: the engine, the sound library, the fonts, the
+templates, the page's rules and workbooks, the queue and ledger, and every film's sources — its
+scenes, script, plan, plate prompts and measured word times.
+
+Three things are deliberately absent, and each has its own way back:
+
+| Not in the repo | Why | Back |
+| --- | --- | --- |
+| `node_modules/` | 700 MB of dependencies | `npm install` |
+| `.env` with `BRIGHTBEAN_API_KEY` | a secret | recreate it (see *Publishing*) |
+| `stills/`, `renders/`, voice WAVs | generated media | re-shoot the plates from each shot's `stills/<shot>.images.json`, then re-take the voice with `tools/voice.py` |
+
+So a fresh clone can write, shoot, voice, render and schedule the next film. What it cannot do is
+re-render a past film untouched — the stills and the voice take are not in history.
+
 ## What to post next
 
 Two workbooks decide it (they live in `video-projects/vintage-motor-house/`):

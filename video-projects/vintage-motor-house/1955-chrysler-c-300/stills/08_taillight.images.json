@@ -1,0 +1,17 @@
+{
+ "engine": "meta-ai/browser-mcp",
+ "prompt": "Create one photorealistic photograph, vertical portrait 9:16: 1955 Chrysler C-300 two-door hardtop coupe, Tango red body with a white roof, wide chrome egg-crate Imperial grille, single round headlights in heavy chrome bezels, chrome bumpers with bullet tips, small gold C-300 script badge on the front fender, tan leather bench interior, Kelsey-Hayes chrome wire wheels with whitewall tires. Extreme close-up of one round taillight and the tip of the rear fin filling the frame, chrome bumper edge below, red paint above, no full car, on a coastal road with the ocean behind it, golden-hour glare. restored to showroom condition, glass-glossy paint with deep mirror reflections, spotless chrome and trim, clean tyres, every panel polished, rich saturated colour, bright clean light, 35mm, no people, no animals, no text, no watermark.",
+ "source": [
+  1152,
+  2048
+ ],
+ "size": [
+  1080,
+  1920
+ ],
+ "files": [
+  "08_taillight.png"
+ ],
+ "scene": "\"with two gears?\" and the closing roar",
+ "at": "2026-11-16T14:28:04"
+}

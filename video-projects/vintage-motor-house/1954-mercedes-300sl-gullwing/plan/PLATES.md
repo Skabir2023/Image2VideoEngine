@@ -36,11 +36,13 @@ Meta AI returns 1152×2048 WebP (exactly 9:16). Each was downloaded from the pag
 Browser MCP's `download`, then scaled once to 1080×1920 with lanczos — no crop, and no
 re-encode beyond the single scale.
 
-One chat per shot. The same chat was tried first, but Meta AI's message list only keeps
-recent messages in the DOM, so "the newest image on the page" kept resolving to the hero
-plate and three downloads came back byte-identical. A fresh chat per shot gives exactly
-one generated image per page, so the download is unambiguous. Consistency is carried by
-the identity block, not by chat context.
+One chat for the whole film, one prompt at a time, as the rule now requires. This shoot was
+first done with a fresh chat per shot, because Meta AI's message list only keeps recent
+messages in the DOM and "the newest image on the page" kept resolving to the hero plate.
+That is no longer the method: the new picture is identified against the image URLs already
+on the page (the `seen` set in `tools/shoot_plates.py`), so the shared chat is unambiguous
+and the session stays open for every plate. Consistency comes from the identity block,
+not from chat context.
 
 ## Checks
 - No people, no animals, no text overlay, no watermark in any of the twelve.

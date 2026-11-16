@@ -1,0 +1,13 @@
+{
+ "engine": "google-flow/flow-mcp",
+ "prompt": "Create one photorealistic photograph, vertical portrait 9:16: 1969 AMC Hurst SC/Rambler two-door hardtop, white body with red and blue racing stripes over the hood and roof, black grille, large ram-air hood scoop, chrome bumpers, Magnum 500 wheels, blackwall tires, gray vinyl bucket seats, Hurst T-handle shifter. Extreme close-up of one front wheel filling the frame, camera low beside the car, Magnum 500 wheel and blackwall tyre only, just the wheel arch visible. empty concrete studio, golden hour light, 35mm, no people, no animals, no text, no watermark.",
+ "source_file": "/home/openclaw/flow-mcp-out/scrambler-plates/scene-02.jpeg",
+ "size": [
+  1080,
+  1920
+ ],
+ "files": [
+  "06_wheel.png"
+ ],
+ "at": "2026-11-16T04:06:05"
+}

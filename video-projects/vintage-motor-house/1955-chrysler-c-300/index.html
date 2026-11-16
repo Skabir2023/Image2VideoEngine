@@ -1,0 +1,54 @@
+<!doctype html>
+<!-- 1955 Chrysler C-300: The Luxury Coupe That Won NASCAR — master timeline. 8 scenes, 1224 frames = 20.400 s at 60 fps.
+     Written by tools/scene_builder.py from scenes.py, so the layers can never drift from the scenes. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1955 Chrysler C-300: The Luxury Coupe That Won NASCAR</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; width: 1080px; height: 1920px; overflow: hidden; background: #050506; }
+  #master { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+  .comp-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="master" data-composition-id="c300-reel" data-start="0" data-duration="20.400000"
+     data-width="1080" data-height="1920">
+
+  <audio id="master-mix" src="audio/final-audio.wav" data-start="0" data-duration="20.400000"
+         data-track-index="20" data-volume="1"></audio>
+
+  <div id="layer-01" class="comp-layer" data-composition-id="s01-hero"
+       data-composition-src="compositions/s01-hero.html"
+       data-start="0.000000" data-duration="3.200000" data-track-index="1"></div>
+  <div id="layer-02" class="comp-layer" data-composition-id="s02-side"
+       data-composition-src="compositions/s02-side.html"
+       data-start="3.200000" data-duration="2.683333" data-track-index="2"></div>
+  <div id="layer-03" class="comp-layer" data-composition-id="s03-rear"
+       data-composition-src="compositions/s03-rear.html"
+       data-start="5.883333" data-duration="2.966667" data-track-index="3"></div>
+  <div id="layer-04" class="comp-layer" data-composition-id="s04-engine"
+       data-composition-src="compositions/s04-engine.html"
+       data-start="8.850000" data-duration="1.816667" data-track-index="4"></div>
+  <div id="layer-05" class="comp-layer" data-composition-id="s05-interior"
+       data-composition-src="compositions/s05-interior.html"
+       data-start="10.666667" data-duration="3.133333" data-track-index="5"></div>
+  <div id="layer-06" class="comp-layer" data-composition-id="s06-wheel"
+       data-composition-src="compositions/s06-wheel.html"
+       data-start="13.800000" data-duration="1.966667" data-track-index="6"></div>
+  <div id="layer-07" class="comp-layer" data-composition-id="s07-grille"
+       data-composition-src="compositions/s07-grille.html"
+       data-start="15.766667" data-duration="1.733333" data-track-index="7"></div>
+  <div id="layer-08" class="comp-layer" data-composition-id="s08-tail"
+       data-composition-src="compositions/s08-tail.html"
+       data-start="17.500000" data-duration="2.900000" data-track-index="8"></div>
+</div>
+
+<script>
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines['c300-reel'] = tl;
+</script>
+</body></html>

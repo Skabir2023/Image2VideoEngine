@@ -1,0 +1,26 @@
+{
+  "project": "Vintage Motor House",
+  "slug": "vintage-motor-house",
+  "film": "1955 Chrysler C-300: The Luxury Coupe That Won NASCAR",
+  "id": "c300-reel",
+  "status": "built 2026-11-16",
+  "social": {
+    "platform": "facebook",
+    "account": "Vintage Motor House"
+  },
+  "output": "1955 Chrysler C-300 - The Luxury Coupe That Won NASCAR",
+  "width": 1080,
+  "height": 1920,
+  "fps": 60,
+  "duration": 20.4,
+  "scenes": [
+    "s01-hero",
+    "s02-side",
+    "s03-rear",
+    "s04-engine",
+    "s05-interior",
+    "s06-wheel",
+    "s07-grille",
+    "s08-tail"
+  ]
+}

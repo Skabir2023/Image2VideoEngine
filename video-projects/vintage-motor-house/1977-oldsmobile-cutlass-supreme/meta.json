@@ -1,0 +1,28 @@
+{
+  "project": "Vintage Motor House",
+  "slug": "vintage-motor-house",
+  "film": "1977 Oldsmobile Cutlass Supreme - The Best-Seller That Hid A Chevrolet",
+  "id": "cutlass-supreme-reel",
+  "status": "built 2026-11-16",
+  "social": {
+    "platform": "facebook",
+    "account": "Vintage Motor House"
+  },
+  "output": "1977 Oldsmobile Cutlass Supreme - The Best-Seller That Hid A Chevrolet",
+  "width": 1080,
+  "height": 1920,
+  "fps": 60,
+  "duration": 21.533,
+  "scenes": [
+    "s01-hero",
+    "s02-side",
+    "s03-rear",
+    "s04-engine",
+    "s05-belt",
+    "s06-valvecover",
+    "s07-interior",
+    "s08-gauge",
+    "s09-grille",
+    "s10-tail"
+  ]
+}
