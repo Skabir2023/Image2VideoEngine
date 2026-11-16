@@ -50,5 +50,17 @@
     ws.forEach((w, i) => tl.fromTo(w, { opacity: 0, y: 40, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.35, ease: 'power3.out', immediateRender: false }, at + i * gap));
     return at + ws.length * gap + 0.35;
   }
-  window.TX = { typeOn, slam, words, roll };
+  // Words fly in from alternate sides and settle into the line. Use for a title lockup
+  // that has to feel drawn onto the plate, not typed or slammed.
+  function fly(tl, el, at, gap = 0.075) {
+    const ws = split(el, 'word').filter((w) => w.textContent.trim()); tl.set(ws, { opacity: 0 }, 0);
+    ws.forEach((w, i) => {
+      const dir = i % 2 === 0 ? -1 : 1;
+      tl.fromTo(w, { opacity: 0, x: 110 * dir, y: 46, rotate: 4 * dir, filter: 'blur(10px)' },
+        { opacity: 1, x: 0, y: 0, rotate: 0, filter: 'blur(0px)', duration: 0.58,
+          ease: 'expo.out', immediateRender: false }, at + i * gap);
+    });
+    return at + ws.length * gap + 0.58;
+  }
+  window.TX = { typeOn, slam, words, roll, fly };
 })();

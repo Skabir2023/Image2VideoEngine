@@ -16,6 +16,6 @@
     "scenes.py": "scenes.py"
   },
   "copy_from": {
-    "audio/build_final.py": "video-projects/vintage-motor-house/1969-amc-sc-rambler/audio/build_final.py"
+    "audio/build_final.py": "templates/film/audio/build_final.py"
   }
 }

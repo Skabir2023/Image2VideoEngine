@@ -2,8 +2,11 @@
 """Ask Meta AI a question through Browser MCP and get the answer back as text.
 
 Browser MCP is a local MCP server (`npx -y @browsermcp/mcp@latest`) that drives
-the person's real, already-signed-in Chrome through its extension. Meta AI is
-the page doing the thinking, so there is no API key and nothing to pay for.
+the person's real, already-signed-in **default Chrome** through its extension.
+Meta AI is the page doing the thinking, so there is no API key and nothing to
+pay for. The extension lives in the default profile; Flow's separate Chrome
+profile (CDP 9333) is not it. If Chrome is closed, `--check` says so — that is
+a closed window, not a missing install. See PROVIDERS.md.
 
 The plan work (scoring, fact-check, script, caption, image prompts) is text,
 not images: this driver fills Meta's composer, sends, and waits for the answer
@@ -35,6 +38,15 @@ END = "<<<END>>>"
 SLICE = 4200          # Browser MCP truncates a reply at 10 000 characters
 COMPOSER = "div[contenteditable=true]"
 SEND_MARKER = "<!-- SEND BELOW -->"   # everything under this line is what Meta reads
+NO_BROWSER = "No browser is connected"
+CHROME_HELP = (
+    "browser-mcp: no Chrome window is connected.\n"
+    "The Browser MCP extension is installed in the default Chrome profile; the window is "
+    "simply not open.\n"
+    "Start it, then re-run:\n"
+    "  /opt/google/chrome/chrome --no-first-run --no-default-browser-check https://meta.ai/\n"
+    "This is not an install, sign-in or API-key problem. Do not switch to a paid route."
+)
 
 
 def load_prompt(path) -> str:
@@ -135,18 +147,24 @@ class MetaText:
 
     def attach(self):
         """Select an existing meta.ai tab, or open one."""
-        out, _ = self.bridge.browser("tab list", timeout=60)
+        out, err = self.bridge.browser("tab list", timeout=60)
+        if err or NO_BROWSER in out:
+            raise SystemExit(CHROME_HELP)
         for line in out.splitlines():
             m = re.match(r"\s*(\d+)\s+.*?—\s+(\S+)", line)
             if m and "meta.ai" in m.group(2):
                 self.bridge.browser("tab select %s" % m.group(1), timeout=60)
                 return False
-        self.bridge.browser("tab new %s\nwait 5000" % META_URL, timeout=120)
+        opened, opened_err = self.bridge.browser("tab new %s\nwait 5000" % META_URL, timeout=120)
+        if opened_err:
+            raise SystemExit("browser-mcp is connected, but opening meta.ai failed: %s"
+                             % (self._payload(opened) or opened.strip())[:300])
         for _ in range(30):
             if self.composer_ready(quiet=True):
                 return True
             time.sleep(1)
-        raise SystemExit("Meta AI composer did not load — is Chrome signed in to meta.ai?")
+        raise SystemExit("the meta.ai tab is open but the composer is not there — "
+                         "sign in to Meta AI once in that Chrome window, or check the page loaded.")
 
     def composer_ready(self, quiet=False) -> bool:
         try:
@@ -249,10 +267,21 @@ def main():
     if args.check or args.cmd is None:
         bridge = Bridge()
         try:
-            out, _ = bridge.browser("tab list", timeout=60)
+            try:
+                out, err = bridge.browser("tab list", timeout=60)
+            except Exception as e:  # noqa: BLE001 - the check reports, it does not crash
+                print("browser-mcp: no reply (%s). Is @browsermcp/mcp installed?" % e)
+                return
+            if err or NO_BROWSER in out:
+                print(CHROME_HELP)
+                return
             print(out.strip()[:900])
             ai = MetaText(bridge)
-            print("composer on the meta.ai tab:", ai.composer_ready(quiet=True))
+            ready = ai.composer_ready(quiet=True)
+            print("composer on the meta.ai tab:", ready)
+            if not ready:
+                print("browser-mcp is connected, but the meta.ai composer is not there — "
+                      "check that this Chrome window is signed in to Meta AI.")
         finally:
             bridge.close()
         return

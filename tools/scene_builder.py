@@ -30,6 +30,11 @@ Times are written ABSOLUTE — as measured on the voice — and the builder conv
 to scene time. A time that lands outside its own scene is a hard error here, because a
 card pushed past the end of its shot never renders and says nothing about it.
 
+One optional extra: `glow=dict(bg, at, rise, peak, hold, settle)` paints a light onto the
+plate itself (a lamp coming up — a taillight, a headlight), created inside BROLL's layer so
+it moves, zooms and shakes with the picture instead of floating over it. `bg` is the CSS
+background (one or more radial gradients), `at` is the absolute film time the light hits.
+
 Frames are the source of truth: `frames = round(duration x 60)`, and the six must sum
 to the film.
 """
@@ -103,6 +108,7 @@ TEMPLATE = """<!doctype html>
 """
 
 BIG_CSS = """  .kick { position: absolute; left: 72px; top: 150px; font: 700 31px/1 'JetBrains Mono', monospace; letter-spacing: 0.30em; color: #EFE8DC; text-shadow: 0 2px 20px rgba(0,0,0,0.92); }
+  .kick.red { color: #E8412B; }
   .b1, .b2 { position: absolute; left: 62px; font: 400 208px/0.90 'Anton', sans-serif; letter-spacing: -0.005em; transform-origin: 0 50%; }
   .b2.small { font-size: 96px; }
   .b2.mid { font-size: 148px; }
@@ -190,7 +196,7 @@ def build(t, film: Path, project: str, out: Path, s, start: int):
     else:
         y1, y2 = 1120, 1330
         rule_y, lab_y, foot_y = 1560, 1594, 1690
-    if s.get("big") and s["big"][1][1] == "small":
+    if s.get("big") and (s["big"][1][1] == "small" or s.get("b2_size") == "small"):
         y2 = y1 + 220
     if s.get("b2_size") == "mid":
         y2 = y1 + 290
@@ -200,7 +206,8 @@ def build(t, film: Path, project: str, out: Path, s, start: int):
 
     markup, tweens = [], []
     if s.get("kick"):
-        markup.append(f'    <div class="kick" id="kick">{s["kick"]}</div>')
+        kick_cls = "kick red" if s.get("kick_red") else "kick"
+        markup.append(f'    <div class="{kick_cls}" id="kick">{s["kick"]}</div>')
         tweens.append(f"  TX.words(tl, $('kick'), {rel(s['kick_at']):.3f}, 0.04);")
 
     if s.get("big"):
@@ -208,17 +215,21 @@ def build(t, film: Path, project: str, out: Path, s, start: int):
         b2, b2tag = s["big"][1]
         markup.append(f'    <div class="b1" id="b1" style="top:{y1}px">{b1}</div>')
         if b2:
-            cls = "b2" + (" red" if b2tag == "red" else "") + (" small" if b2tag == "small" else "") \
+            cls = "b2" + (" red" if b2tag == "red" else "") \
+                + (" small" if b2tag == "small" or s.get("b2_size") == "small" else "") \
                 + (" mid" if s.get("b2_size") == "mid" else "")
             markup.append(f'    <div class="{cls}" id="b2" style="top:{y2}px">{b2}</div>')
-        markup.append(f'    <div class="rule" id="rule" style="top:{rule_y}px"></div>')
+        if s.get("rule"):
+            markup.append(f'    <div class="rule" id="rule" style="top:{rule_y}px"></div>')
 
-        tweens.append(f"  TX.slam(tl, $('b1'), {rel(s['b1_at']):.3f});")
+        b1_tween = "fly" if s.get("fly") else "slam"
+        tweens.append(f"  TX.{b1_tween}(tl, $('b1'), {rel(s['b1_at']):.3f});")
         if s.get("roll"):
             tweens.append(f"  TX.roll(tl, $('b1'), {rel(s['b1_at']):.3f}, "
                           f"{s['roll']['dur']:.2f}, {s['roll']['seed']});")
         if b2:
-            tweens.append(f"  TX.slam(tl, $('b2'), {rel(s['b2_at']):.3f});")
+            b2_tween = "fly" if s.get("fly") else "slam"
+            tweens.append(f"  TX.{b2_tween}(tl, $('b2'), {rel(s['b2_at']):.3f});")
         if s.get("rule"):
             tweens.append(f"  tl.fromTo($('rule'), {{ scaleX: 0 }}, "
                           f"{{ scaleX: 1, duration: 0.34, ease: 'power3.out' }}, {rel(s['rule']):.3f});")
@@ -254,12 +265,28 @@ def build(t, film: Path, project: str, out: Path, s, start: int):
                    "ease: 'power2.out' }, 0);")
         vfx.append(f"  tl.to($('leak'), {{ opacity: 0, duration: 0.45, ease: 'power2.in' }}, DUR - 0.45);")
 
+    # A light painted on the plate: it is appended inside BROLL's own layer, so the camera's
+    # push and the roar's shake carry it, and the lamp stays on the lamp. Screen blend, so it
+    # adds light to the lens instead of covering it.
+    styles = BIG_CSS
+    if s.get("glow"):
+        g = s["glow"]
+        styles += ("\n  .tailglow { position: absolute; inset: 0; pointer-events: none;"
+                   " opacity: 0; mix-blend-mode: screen; }\n")
+        vfx.append("  const glow = document.createElement('div'); glow.className = 'tailglow';")
+        vfx.append(f'  glow.style.background = "{g["bg"]}";')
+        vfx.append("  $('plate').querySelector('.br-layer').appendChild(glow);")
+        vfx.append(f"  tl.fromTo(glow, {{ opacity: 0 }}, {{ opacity: {g['peak']}, "
+                   f"duration: {g['rise']}, ease: 'power2.out' }}, {rel(g['at']):.3f});")
+        vfx.append(f"  tl.to(glow, {{ opacity: {g['hold']}, duration: {g['settle']}, "
+                   f"ease: 'power1.out' }}, {rel(g['at']) + g['rise']:.3f});")
+
     html = TEMPLATE.format(
         film=t.FILM, total=len(t.SCENES), n=s["n"], slug=slug, id=s["file"],
         dur=f"{dur:.6f}", frames=s["frames"], still=f"{project}/stills/{s['still']}",
         seed=s["seed"], zoom0=s["zoom0"], focus=s["focus"],
         scrim_side=scrim_side, scrim_grad=scrim_grad,
-        styles=BIG_CSS, markup="\n".join(markup), tweens="\n".join(tweens),
+        styles=styles, markup="\n".join(markup), tweens="\n".join(tweens),
         shots=shots, vfx="\n".join(vfx), shakes=", ".join(shakes),
     )
     (out / f"{s['file']}.html").write_text(html)

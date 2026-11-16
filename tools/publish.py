@@ -72,6 +72,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import brightbean  # noqa: E402
 import caption as caption_rules  # noqa: E402
+import score as story_gate  # noqa: E402
 from excel import Workbook  # noqa: E402
 
 ENGINE = Path(__file__).resolve().parents[1]
@@ -311,7 +312,7 @@ class Project:
 # -- queue ---------------------------------------------------------------
 def queue(project: Project, video=None, title="", description="", hashtags="",
           car="", angle="", caption_file=None, caption_score=None,
-          force=False) -> dict:
+          force=False, caption_parts=None) -> dict:
     project.ensure()
     if caption_file:
         blocks = [b.strip() for b in Path(caption_file).read_text(encoding="utf-8").split("\n\n") if b.strip()]
@@ -327,12 +328,22 @@ def queue(project: Project, video=None, title="", description="", hashtags="",
         raise SystemExit("Need --title (or a caption file whose first block is the title).")
     caption = "\n\n".join(part for part in (title, description, hashtags) if part)
 
+    # The story gate first (tools/score.py): the viral score, the fact sheet, the five
+    # beats, the word budget, the frame sum, the plate count and the caption's own
+    # numbers are assertions now, not promises. A film that fails one is not queued.
+    # --force queues it anyway and records the failures in `error`.
+    print("story gate (tools/score.py):")
+    gate_ok = story_gate.evaluate(project.path, quiet=True)
+    if not gate_ok and not force:
+        raise SystemExit("The film failed the story gate above — fix the plan, or queue "
+                         "with --force.")
+
     # The caption contract, checked before a row exists. The brain scores the
     # caption (META PROMPT.md); this enforces the counts, the bans, the naming
-    # rule and the 80 floor, so a thin caption cannot reach the page. --force
-    # queues anyway, and says so in the row's `error` column.
+    # rule, the arithmetic of the five weights and the 80 floor, so a thin caption
+    # cannot reach the page. --force queues anyway, and says so in `error`.
     report = caption_rules.report_for(title, description, hashtags,
-                                      caption_score, car)
+                                      caption_score, car, caption_parts)
     print(report.render())
     if not report.passed and not force:
         raise SystemExit("Caption did not pass: rewrite it, or queue with --force.")
@@ -373,8 +384,9 @@ def queue(project: Project, video=None, title="", description="", hashtags="",
         "fps": str(project.meta.get("fps", "")),
         "rendered_at": iso(datetime.fromtimestamp(source.stat().st_mtime, timezone.utc)),
     }
-    if not report.passed:
-        row["error"] = "caption forced past the check: " + "; ".join(report.failures)[:300]
+    if not gate_ok or not report.passed:
+        reasons = ("; ".join(report.failures) or "story gate")[:300]
+        row["error"] = "forced past the gate: " + reasons
         print("  caption: FORCED past %d failed check(s) — recorded in `error`"
               % len(report.failures))
     header, rows = read_rows(project.data_csv)
@@ -484,11 +496,14 @@ def schedule(project: Project, limit=None, start_at=None, start_delay=None,
         try:
             if path is None or not path.is_file():
                 raise RuntimeError("film missing: %s" % (path or "(no video on the row)"))
+            state = None
             if post_id:
                 print("- resuming post %s for %s" % (post_id, label))
+                state = brightbean.post(key, post_id)
             else:
                 existing = brightbean.find_post_by_caption(key, account_id, caption)
                 if existing is not None:
+                    state = existing
                     post_id = existing["id"]
                     row["status"] = "uploaded:" + post_id
                     row["post_id"] = post_id
@@ -504,8 +519,29 @@ def schedule(project: Project, limit=None, start_at=None, start_delay=None,
                     print("- uploaded %s (%d MB) -> post %s" % (
                         label, path.stat().st_size // (1024 * 1024), post_id))
 
-            brightbean.schedule_post(key, post_id, slot)
-            row["scheduled_at"] = iso(slot)
+            # A retry that finds its post already booked keeps that slot. Booking it
+            # again would move a film the page is already expecting, and would spend a
+            # fresh slot on a film that is already placed.
+            held = None
+            if (state or {}).get("status") == "scheduled":
+                for channel in state.get("channels") or []:
+                    held = parse_utc(channel.get("scheduledAt"))
+                    if held:
+                        break
+
+            if held is not None:
+                row["scheduled_at"] = iso(held)
+                if held > when:
+                    when = held
+                print("  already booked for %s UTC — keeping its slot"
+                      % held.strftime("%Y-%m-%d %H:%M"))
+            else:
+                brightbean.schedule_post(key, post_id, slot)
+                row["scheduled_at"] = iso(slot)
+                placed += 1
+                when = slot
+                print("  booked %s -> %s UTC" % (label, slot.strftime("%Y-%m-%d %H:%M")))
+
             row["status"] = "scheduled"
             row["error"] = ""
             row["video"] = str(path.resolve())
@@ -518,9 +554,6 @@ def schedule(project: Project, limit=None, start_at=None, start_delay=None,
                 for note in book.mark(row, "scheduled"):
                     print("  %s" % note)
             done += 1
-            placed += 1
-            when = slot
-            print("  booked %s -> %s UTC" % (label, slot.strftime("%Y-%m-%d %H:%M")))
         except Exception as error:  # noqa: BLE001 - one bad film must not stop the batch
             failed += 1
             row["status"] = "failed"
@@ -714,8 +747,10 @@ def main() -> None:
     p_queue.add_argument("--caption-file", help="three blocks: title, description, hashtags")
     p_queue.add_argument("--caption-score", type=int,
                          help="the caption score the brain gave it (gate 80)")
+    p_queue.add_argument("--score-parts", default=None,
+                         help='the five weights, e.g. "23/19/18/14/16" — they must add up')
     p_queue.add_argument("--force", action="store_true",
-                         help="queue a caption that failed the check")
+                         help="queue a film that failed the story or caption gate")
 
     p_sched = sub.add_parser("schedule", help="upload queued films and book their slots")
     p_sched.add_argument("project")
@@ -746,7 +781,7 @@ def main() -> None:
     if args.command == "queue":
         queue(project, args.video, args.title, args.description, args.hashtags,
               args.car, args.angle, args.caption_file, args.caption_score,
-              args.force)
+              args.force, args.score_parts)
     elif args.command == "schedule":
         done, failed = schedule(project, args.limit, args.start_at, args.start_delay,
                                 args.start_min, args.start_max, args.gap_min, args.gap_max,

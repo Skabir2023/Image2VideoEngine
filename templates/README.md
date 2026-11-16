@@ -63,14 +63,15 @@ Only when it is a genuinely different **structure**, not a different mood:
      "canvas": [1080, 1920],
      "dirs": ["compositions", "stills", "audio/paragraph", "audio/sfx", "plan", "qa", "renders"],
      "render": {"meta.json": "meta.json", "scenes.py": "scenes.py"},
-     "copy_from": {"audio/build_final.py": "video-projects/<page>/<film>/audio/build_final.py"}
+     "copy_from": {"audio/build_final.py": "templates/film/audio/build_final.py"}
    }
    ```
 
    `name` is required and unique. `render` files are copied with `{{PROJECT}}`, `{{PAGE}}`,
    `{{SLUG}}`, `{{FILM}}`, `{{ID}}`, `{{DIR}}` substituted. `copy_from` copies a file that already
-   exists rather than forking it — the sound law lives in the reference build, and a snapshot in
-   here would rot.
+   exists rather than forking it — and it points **into `templates/`**, never at a finished film:
+   a film's folder is a record of what was delivered, so the next build must not inherit from it
+   or chase it when it changes.
 
 2. Keep `tools/scene_builder.py` as the generator. A template that writes its own compositions is
    a second engine, and the two will drift.

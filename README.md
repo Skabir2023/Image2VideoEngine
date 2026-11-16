@@ -81,20 +81,31 @@ command and gate spelled out.
    Browser MCP (`python3 tools/meta.py ask --prompt-file "…/META PROMPT.md"`), which scores each
    one, picks the angle and writes the script, the caption and one image prompt per 3 seconds for
    the ones that pass. Under 80: another angle, then another car — nothing is built below 80. Every number Meta
-   proposes is checked against a source and written into `plan/FACTCHECK.md`. If Meta will not
-   answer, the agent does the same work in the same shape and says so.
-2. **Make the folder.** `video-projects/vintage-motor-house/<car-slug>/`, copying the reference
-   newest film's `meta.json`, `index.html`, `scenes.py` and `audio/build_final.py` (it carries
-   the current seam and sound law) and editing them for the new car, then
-   start the plan files. Same car, new angle → a new folder; never a copy of the page.
+   proposes is checked against a source and written into `plan/FACTCHECK.md`. If Meta is open,
+   signed in, and still will not answer, the agent does the same work in the same shape and says
+   so — a closed Chrome window is fixed, not worked around.
+2. **Make the folder.** `python3 tools/new_film.py video-projects/vintage-motor-house/<car-slug>
+   --title "…"` lays it down from `templates/film/`: the tree, a `meta.json` carrying the new car's
+   names, a `scenes.py` skeleton that refuses to build until it has real measurements, and the
+   reference `audio/build_final.py` (it carries the current seam and sound law). Then fill the
+   numbers and start the plan files. Same car, new angle → a new folder; never a copy of the page.
 3. **Voice first.** One Kokoro take at `speed: 1.2`, transcribed, and the word times copied into
    the scene table and the sound build by hand — the build does not read the transcript, so those
    numbers are the truth. Cuts land on the transcribed words.
 4. **Draw the plates — one per 3 seconds.** Six fixed angles first (front ¾, side, rear, engine
    bay, interior, wheel), then close-ups to fill the cadence: 6 plates for 18 s, 8 for 24 s. All
-   of them in the **one** Meta AI tab, opened once for the whole film, prompts from `plan/PLATES.md`
-   (identity block kept word for word), free through the kit's engine, no people, animals or text,
-   each prompt saved beside the plate.
+   of them through **one route**: Meta AI in the one tab, or Google Flow through flow-mcp (free
+   images on Nano Banana). Both are free and installed; `python3 tools/brain.py` says which window
+   is open. **All of a film's plates come out of that one open session** — the same Meta chat tab
+   or the same Flow project window, never a fresh chat per image — one prompt at a time, sent once
+   and never re-sent: in the Meta tab check at 22 s then every 10 s until the plate is done; in
+   Flow, call `flow_wait` until it says finished, and re-make only a failed scene by its job id.
+   Prompts come from `plan/PLATES.md`, identity block kept word for word, no people, animals or
+   text, each prompt saved beside the plate.
+
+   Flow can also generate a **short video clip**, which costs credits (7–12 for a 4–8 s Omni clip,
+   10–100 for Veo), so it needs a yes first — and no scene can play one yet: the films are built
+   from stills with camera moves, and the gate counts stills. See `AGENTS.md` → *4. Plates*.
 5. **Build, render, check.** `npm run render -- video-projects/vintage-motor-house/<car-slug>`,
    then lint, the frame scan, the loudness and the frames themselves — and name the file after
    its title (5–11 words) before anyone sees it.
@@ -102,13 +113,45 @@ command and gate spelled out.
    with its title, long description, hashtags, `--car`, `--angle` and `--caption-score`. The check
    runs first (`tools/caption.py`), so a thin caption is refused; a passing one puts one row in
    `data.csv`, pointing at the render where it lies.
-7. **Publish it, after a yes.** `schedule --dry-run` shows the slot; the real `schedule` uploads,
-   books it, moves that one row to `uploaded.csv` and marks both workbooks.
+7. **Publish it, after a yes.** `python3 tools/scheduler.py video-projects/vintage-motor-house
+   --dry-run` shows the slots; the same command without `--dry-run` uploads, books them, moves those
+   rows to `uploaded.csv` and marks both workbooks. One scheduler, for you and for the AI.
 8. **Sync and measure.** `sync` brings back the post URL and the date; fill views at 48 h and 7
    days, `Star?` at 50,000+. Then send the file with one line on what changed and tidy the drafts.
 
 `AGENTS.md` has the exact timings, the sound law, the change-coupling table and the known
 traps. One folder holds one film; the engine is shared by all of them.
+
+## The two free brains
+
+Both routes are **installed and working**, with no API key and nothing to pay for **on the image
+and voice routes** — Flow only spends credits if you ask it for video. They run in two different
+Chrome profiles, so one window can be open while the other is closed — that is a state, not a
+broken route.
+
+| Job | Route | What to run |
+| --- | --- | --- |
+| Score, script, caption, plate prompts | Meta AI in the **default** Chrome (Browser MCP extension) | `python3 tools/meta.py ask …` |
+| Still plates | Google Flow in flow-mcp's own Chrome (CDP 9333, 0 credits) | `python3 tools/shoot_plates_flow.py …` |
+| Short video clips (credits — ask first) | the same Flow window and project | `python3 tools/flow_call.py flow_generate …` |
+| Voice | Kokoro on `localhost:8880` | `python3 tools/voice.py …` |
+
+One command tells you the truth about all three:
+
+```bash
+python3 tools/brain.py
+```
+
+If it says browser-mcp has no browser connected, the default Chrome window is closed. Start it
+(no `--user-data-dir`, so the profile with the extension is used) and rerun:
+
+```bash
+/opt/google/chrome/chrome --no-first-run --no-default-browser-check https://meta.ai/
+```
+
+If Flow says `signedIn: true, inProject: false`, Flow is connected and simply has no project open
+— open or create one in Flow's Chrome window. Neither case is an install problem, and neither is
+a reason to use a paid API. The full explanation is in `PROVIDERS.md`.
 
 ## Publish it
 
@@ -138,10 +181,16 @@ python3 tools/publish.py queue video-projects/vintage-motor-house/1969-ford-must
   --car "1969 Ford Mustang Boss 429" --angle "Price / Rarity"
 
 python3 tools/publish.py status video-projects/<page>/<film>
-python3 tools/publish.py schedule video-projects/<page>/<film> --dry-run   # the slot, nothing sent
-python3 tools/publish.py schedule video-projects/<page>/<film>             # upload and book
+python3 tools/scheduler.py video-projects/<page> --dry-run  # the slots, nothing sent
+python3 tools/scheduler.py video-projects/<page>            # upload and book the page's queue
 python3 tools/publish.py sync video-projects/<page>/<film>                 # get the post URL
 ```
+
+**`tools/scheduler.py` is the scheduler.** Point it at the page and it books everything queued
+there, one film every 4–5 hours; point it at one film and it does just that film. The knobs are
+`--limit 3`, `--interval 60` (a fixed hour between slots), `--start-at 2026-11-17T09:00:00Z`,
+`--start-delay 90`. Ask the AI to schedule and it runs this same file — it has no reason to write a
+new script for a batch, and one written for a batch should not be trusted.
 
 `queue` writes the caption and the film's address as one row. `schedule` uploads it from where it
 lies, books a slot (the first 1–2 hours out, then one every 4–5 hours), and moves the **row** from
@@ -165,11 +214,22 @@ The engine:
 | Path | What it is |
 | --- | --- |
 | `AGENTS.md` | operating manual for an AI model working here |
+| `PROVIDERS.md` | browser-mcp (Meta AI) and flow-mcp (Google Flow): what is installed and how to read a closed window |
 | `assets/*.js`, `assets/fonts/` | the drawing engine, GSAP and the local fonts |
-| `sound/engines/` | the engine recordings, with their licence in `sound/README.md` |
+| `sound/kit.json` | the four sounds a reel uses, and the alternatives each story angle can pick |
+| `sound/engines/`, `sound/SFX Sound Effects/` | the library: engine recordings and one-shots for the closing hit |
+| `tools/sound.py` | hear a recording's shape, cut a sound out at the right level, check the kit |
+| `tools/brain.py` | one preflight for Meta AI, Flow and Kokoro |
+| `tools/meta.py` | Meta AI through browser-mcp, in the default Chrome |
+| `tools/flow_call.py`, `tools/shoot_plates_flow.py` | Flow through flow-mcp, in its own Chrome (free images; video clips cost credits) |
+| `tools/shoot_plates.py` | plates through Meta AI (browser-mcp) |
+| `tools/voice.py` | one Kokoro take and its transcript, with `am_michael` / `am_adam` |
 | `tools/render-all.sh` | the whole pipeline for one film |
 | `tools/scan.py` | blank / black / one-frame-pop scan of any render |
+| `templates/` | the film skeleton a new folder starts from — one structure, because the look is fixed |
+| `tools/new_film.py` | makes a film folder from `templates/<name>/`, so nothing is hand-copied |
 | `tools/scene_builder.py` | writes every film's scenes and `index.html` from its `scenes.py` table |
+| `tools/scheduler.py` | the one scheduler: books a page's queue, or one film, and nothing else |
 | `tools/publish.py` | pick, queue, schedule, status and sync for one film, through its page |
 | `tools/brightbean.py`, `tools/excel.py` | BrightBean API calls, and the workbook cell writes |
 | `video-projects/<page>/` | one folder per page: rules, workbooks, queue, and its films |
@@ -205,15 +265,23 @@ A film — `video-projects/vintage-motor-house/1954-mercedes-300sl-gullwing/`:
 
 ## The sound
 
-One big-block V8, kept away from the words. Its sustained section is looped into a steady,
-deep idle and ducked 30 dB whenever a word is spoken; the only real rev comes after the last
-word, where the car answers the final question. Measured: −14.2 LUFS, peak −2.4 dBFS. The
-knobs are at the top of the film's `audio/build_final.py`, the reasoning in its
-`plan/TIMELINE.md`.
+Four sounds, and the car never talks over a word:
+
+1. **the start** — the engine catching before the narrator opens his mouth;
+2. **the bed** — a running idle under the whole film, dropped 30 dB the moment a word begins;
+3. **the roar** — two seconds after the last word, the car answering the final question;
+4. **the hit** — one low thud under the closing card.
+
+Which recording fills each slot is a menu, and the story angle chooses from it: a car that
+fails can start with an engine that never catches, a luxury car gets a quieter idle. The
+menu is `sound/kit.json`, the levels are written into each film's `audio/build_final.py`, and
+`python3 tools/sound.py list` prints the lot. Measured the same way every time: −14.2 LUFS,
+true peak under −1.3 dBFS.
 
 ## Licence
 
-The two engine recordings are from Pixabay under the Pixabay Content License: free for
-commercial use, no attribution, no royalties, but the audio files themselves may not be
-redistributed on their own or claimed as your own recording. Inside the video is fine.
-Details in `sound/README.md`.
+The engine recordings are from Pixabay (Pixabay Content License) and the closing hit from
+Mixkit (Mixkit Free License): free for commercial use, no attribution, no royalties, but the
+audio files themselves may not be redistributed on their own or claimed as your own recording.
+Inside the video is fine. One pack of one-shots came with no licence file, so `sound/kit.json`
+marks it `unknown` and no film defaults to it. Details in `sound/README.md`.

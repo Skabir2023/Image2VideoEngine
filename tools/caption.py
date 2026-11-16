@@ -8,13 +8,20 @@ out on the page.
 
 Three parts, exactly, no labels (MASTER PROMPT.md):
 
-    The Fastest 1954 Mercedes 300SL Gullwing Ever Built        <- 5-11 words, year + make/model + power word
+    The Fastest 1954 Mercedes 300SL Gullwing Ever Built        <- 5-11 words; either shape:
+                                                                  certification (year + make +
+                                                                  model + power word) or tease
+                                                                  (the car named plus a claim)
 
     You have probably never climbed into a car through the roof. ... stare?
                                                                 <- 3-5 sentences, 45-80 words, second
                                                                    person, ends on the question
 
      #Mercedes #ClassicCars #300SL #Gullwing #VintageMotorHouse  <- 4-5 tags, brand + classic + model
+
+The score is checked as arithmetic, not as a claim: pass the five weights with
+``--score-parts "23/19/18/14/16"`` and they must add up to ``--score``, with no weight over
+its cap (hook shock 25, relatability 20, curiosity gap 20, shareability 15, visual wow 20).
 
 Usage:
 
@@ -36,6 +43,27 @@ POWER_WORDS = (
     "most secret", "most powerful", "most luxurious", "most forgotten",
     "rarest", "fastest", "biggest",
 )
+
+# The master's two title shapes. A title is legal under either one:
+#
+#   certification  year + make + model + one power word
+#                  "The Rarest 1969 Ford Mustang Boss 429 Ever Made"
+#   tease          the car, named, plus a claim about it
+#                  "The Buick That Humiliated V8 Muscle Cars"
+#
+# Both are bound by the grounding test (could this title sit on a different car?), and
+# no machine can run that test. The claim signal below is the proxy: the tease has to
+# carry a verdict, a comparison or a figure, not just a model name and a mood. The
+# reader still runs the grounding test before the film goes out.
+CLAIM_RE = re.compile(
+    r"\b(that|which|who|only|never|not|twice|three times|half|outran|outgunned|"
+    r"beat|humbled|humiliated|killed|failed|flopped|sold|cost|built|made|stopped|"
+    r"ended|saved|ruined|broke|refused|hid|tricked|shocked|insulted)\b", re.IGNORECASE)
+
+# The caption's five weights, in the order the plan records them. They sum to 100, so a
+# caption score that does not add up is a number someone typed, not a judgement.
+SCORE_WEIGHTS = (("hook shock", 25), ("relatability", 20), ("curiosity gap", 20),
+                 ("shareability", 15), ("visual wow", 20))
 
 # Titles the page refuses (generic, no car, no claim).
 BANNED_TITLE = (
@@ -154,28 +182,56 @@ def check_title(title: str, car: str, report: Report) -> None:
         report.bad("title        generic: \"%s\"" % banned[0])
 
     power = [word for word in POWER_WORDS if re.search(r"\b%s\b" % re.escape(word), lowered)]
-    if power:
-        report.ok("title        power word: %s" % power[0].title())
-    else:
-        report.bad("title        no power word (%s)" % ", ".join(
-            w.title() for w in POWER_WORDS[:3]) + ", ...")
-
     year = YEAR_RE.search(title)
-    if year:
-        report.ok("title        names the year %s" % year.group(0))
-    else:
-        report.bad("title        no year — a mood line, not a headline")
-
+    model: list[str] = []
+    makes: list[str] = []
     if car:
         wanted_year, model_tokens = _car_parts(car)
-        if wanted_year and wanted_year not in title:
-            report.bad("title        year is not the car's (%s)" % wanted_year)
-        found = [t for t in model_tokens if t.lower() in lowered]
-        if model_tokens and not found:
-            report.bad("title        does not name the model (%s)" % " ".join(model_tokens))
-        elif model_tokens:
-            report.ok("title        names the model: %s" % found[0])
+        makes = _make_tokens(car)
+        if wanted_year and year and wanted_year != year.group(0):
+            report.bad("title        names %s, the car is %s" % (year.group(0), wanted_year))
+        model = [t for t in model_tokens if t.lower() in lowered]
+
+    # -- shape 1: certification, year + make + model + one power word ------------------
+    certification_ok = bool(year) and bool(power)
+    if car and not model:
+        certification_ok = False
+
+    # -- shape 2: tease, the car named plus a claim -----------------------------------
+    # Digits count as a claim, but the year is the car's name rather than a claim, so it
+    # is removed before looking for a figure.
+    claim_text = YEAR_RE.sub(" ", title.lower())
+    claim = re.search(r"\d", claim_text) or CLAIM_RE.search(claim_text)
+    named = bool(model) or any(m in lowered for m in makes)
+    tease_ok = named and bool(claim)
+
+    if certification_ok:
+        report.ok("title        certification shape: year + model + %s" % power[0].title())
+    elif tease_ok:
+        report.ok("title        tease shape: %s" % (
+            model[0] if model else makes[0].title()))
+        report.warn("title        tease shape — run the grounding test: could this title "
+                    "sit on a different car's post?")
     else:
+        if not year and not tease_ok:
+            report.bad("title        no year, and not a tease either — a mood line, "
+                       "not a headline")
+        if not power and not tease_ok:
+            report.bad("title        no power word (%s) — or make it a tease that "
+                       "claims something" % ", ".join(w.title() for w in POWER_WORDS[:3]))
+        if car and not named:
+            report.bad("title        does not name the car (%s)" % car)
+        if not claim and named:
+            report.bad("title        names the car but claims nothing — the tease needs "
+                       "a verdict, a comparison or a figure")
+
+    if year:
+        report.ok("title        names the year %s" % year.group(0))
+    if model:
+        report.ok("title        names the model: %s" % model[0])
+    elif car and named:
+        report.ok("title        names the make")
+    if not car:
         report.warn("title        no --car given: model and year not compared")
 
 
@@ -264,12 +320,32 @@ def check_hashtags(hashtags: str, car: str, report: Report) -> None:
         elif makes:
             report.bad("hashtags     no brand tag (#%s)" % makes[0].title())
         _, model_tokens = _car_parts(car)
-        if model_tokens and not any(any(tok.lower() in tag for tag in lowered)
-                                    for tok in model_tokens):
+        # A tag drops punctuation ("SC/Rambler" -> #SCRambler), so compare bare letters.
+        flat_tags = [re.sub(r"[^a-z0-9]", "", t) for t in lowered]
+        if model_tokens and not any(
+                re.sub(r"[^a-z0-9]", "", tok.lower()) in tag
+                for tok in model_tokens for tag in flat_tags):
             report.warn("hashtags     no model tag (%s)" % model_tokens[0])
 
 
-def check_score(score, report: Report) -> None:
+def parse_parts(parts):
+    """The five sub-scores from '23/19/18/14/16' or 'hook 23, relatability 19, …'.
+
+    Returns ``None`` when there is nothing to read, so an un-itemised score can be warned
+    about rather than silently accepted.
+    """
+    if parts is None:
+        return None
+    if isinstance(parts, str):
+        found = re.findall(r"\d{1,3}", parts)
+    else:
+        found = [str(p) for p in parts]
+    if not found:
+        return None
+    return [int(n) for n in found]
+
+
+def check_score(score, report: Report, parts=None) -> None:
     if score is None:
         report.bad("score        none recorded — the brain scores the caption, "
                    "pass --caption-score")
@@ -282,20 +358,43 @@ def check_score(score, report: Report) -> None:
     if not 0 <= value <= 100:
         report.bad("score        %d is outside 0–100" % value)
         return
-    if value >= SCORE_GATE:
-        report.ok("score        %d/100 (gate %d)" % (value, SCORE_GATE))
-    else:
+    if value < SCORE_GATE:
         report.bad("score        %d/100 — below the gate of %d, rewrite it"
                    % (value, SCORE_GATE))
+        return
+
+    # A score is a judgement, so it has to be five judgements that add up.
+    marks = parse_parts(parts)
+    if not marks:
+        report.warn("score        %d/100, not itemised — pass --score-parts "
+                    "\"23/19/18/14/16\" so the total can be added up" % value)
+        return
+    if len(marks) != len(SCORE_WEIGHTS):
+        report.bad("score        %d sub-score(s) — the five weights are %s"
+                   % (len(marks), "/".join(str(w) for _, w in SCORE_WEIGHTS)))
+        return
+    over = ["%s %d/%d" % (name, got, cap)
+            for (name, cap), got in zip(SCORE_WEIGHTS, marks) if got > cap]
+    if over:
+        report.bad("score        a weight is scored above its cap: %s" % ", ".join(over))
+        return
+    total = sum(marks)
+    itemised = ", ".join("%s %d/%d" % (name, got, cap)
+                         for (name, cap), got in zip(SCORE_WEIGHTS, marks))
+    if total != value:
+        report.bad("score        the parts add to %d, the score says %d (%s)"
+                   % (total, value, itemised))
+        return
+    report.ok("score        %d/100 = %s (gate %d)" % (value, itemised, SCORE_GATE))
 
 
 def report_for(title: str, description: str, hashtags: str, score,
-               car: str = "") -> Report:
+               car: str = "", parts=None) -> Report:
     report = Report()
     check_title(" ".join((title or "").split()), car, report)
     check_description(" ".join((description or "").split()), title, report)
     check_hashtags(hashtags or "", car, report)
-    check_score(score, report)
+    check_score(score, report, parts)
     return report
 
 
@@ -313,10 +412,13 @@ def main() -> None:
                          help="the caption score the brain gave it (gate 80)")
     p_check.add_argument("--car", default="",
                          help='e.g. "1954 Mercedes-Benz 300SL Gullwing"')
+    p_check.add_argument("--score-parts", default=None,
+                         help='the five weights, e.g. "23/19/18/14/16" '
+                              '(hook/relatability/curiosity/shareability/wow)')
 
     args = parser.parse_args()
     report = report_for(args.title, args.description, args.hashtags,
-                        args.score, args.car)
+                        args.score, args.car, args.score_parts)
     print(report.render())
     if not report.passed:
         sys.exit(1)
