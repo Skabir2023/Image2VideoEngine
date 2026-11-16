@@ -14,6 +14,11 @@ node_modules/
 *.webp
 *.ico
 
+# Exception — the shared sound library IS versioned: engine recordings and SFX
+# (Pixabay Content Licence, see sound/README.md). No parent directory of sound/
+# is excluded, so this negation takes effect.
+!sound/**
+
 # Render intermediates (regenerated on every render)
 video-projects/*/*/renders/cut/
 video-projects/*/*/audio/premix.wav

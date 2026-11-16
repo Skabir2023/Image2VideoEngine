@@ -1,0 +1,17 @@
+{
+  "project": "{{PROJECT}}",
+  "slug": "{{PAGE}}",
+  "film": "{{FILM}}",
+  "id": "{{ID}}",
+  "status": "scaffolded from templates/film — fill duration and scenes once the voice is measured",
+  "social": {
+    "platform": "facebook",
+    "account": "{{PROJECT}}"
+  },
+  "output": "{{FILM}}",
+  "width": 1080,
+  "height": 1920,
+  "fps": 60,
+  "duration": 0.0,
+  "scenes": []
+}

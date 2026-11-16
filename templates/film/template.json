@@ -1,0 +1,21 @@
+{
+  "name": "Classic Card Reel",
+  "description": "A page film: 1080x1920 vertical, one plate per 3 s, scenes generated from a data-only table by tools/scene_builder.py.",
+  "canvas": [1080, 1920],
+  "dirs": [
+    "compositions",
+    "stills",
+    "audio/paragraph",
+    "audio/sfx",
+    "plan",
+    "qa",
+    "renders"
+  ],
+  "render": {
+    "meta.json": "meta.json",
+    "scenes.py": "scenes.py"
+  },
+  "copy_from": {
+    "audio/build_final.py": "video-projects/vintage-motor-house/1969-amc-sc-rambler/audio/build_final.py"
+  }
+}
