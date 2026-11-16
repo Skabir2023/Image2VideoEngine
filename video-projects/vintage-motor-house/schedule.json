@@ -1,0 +1,6 @@
+{
+  "_note": "The page's posting hours, local wall clock. 01:00 is the same night as 19:00, so the day runs 01:00, 07:00, 13:00, 19:00. tools/scheduler.py books the next free one; a booked slot is never handed out twice.",
+  "times": ["07:00", "13:00", "19:00", "01:00"],
+  "tz": "Asia/Dhaka",
+  "lead_min": 15
+}

@@ -487,15 +487,18 @@ python3 tools/scheduler.py $PAGE               # upload, book, move the row
 python3 tools/scheduler.py $PROJ               # one film: same page queue, narrower
 ```
 
-**One command, and it is always `tools/scheduler.py`.** It books the page's whole queue by
-default, so a batch of ten is one command and not ten: run `--dry-run`, read the slots, then run
-it for real. `--limit N` books only the first N, `--interval 60` a fixed hour apart,
-`--start-at 2026-11-17T09:00:00Z` an exact first slot. A scheduling script written for one batch is
-the anti-pattern — this door already carries the flags, and `publish.py schedule` is the same code
-underneath it, so anything added there is added here too.
+**One command, and it is always `tools/scheduler.py`.** "Schedule the next one" means
+`python3 tools/scheduler.py video-projects/<page>` with no flags at all: it books the next free
+hour on the page's grid (below) and the one after that for the next film. It books the page's
+whole queue by default, so a batch of ten is one command and not ten — run `--dry-run`, read the
+slots, then run it for real. `--limit N` books only the first N, `--daily "09:30,21:30"` shifts the
+hours for one run, `--start-at 2026-11-17T09:00:00Z` an exact first slot, `--interval 60` a fixed
+gap. A scheduling script written for one batch is the anti-pattern — this door already carries
+the flags, and `publish.py schedule` is the same code underneath it, so anything added there is
+added here too.
 
-`schedule` uploads from `renders/`, books the slot (first film 60–120 minutes out, then 4–5 hour
-gaps), **moves only the row** into `uploaded.csv`, and marks both workbooks: Car List
+`schedule` uploads from `renders/`, books the slot (the next free hour on the page's grid —
+*Slots* below), **moves only the row** into `uploaded.csv`, and marks both workbooks: Car List
 `Used? = Yes` with `Angle Used` and `Date Used`, and `Script Done?` / `Images Done?` / `Posted?`
 on the Tracker row for that car. It will not invent a Tracker row it cannot find — that one is
 written by hand. Uploading is a public, external action: never run the real `schedule` for a film
@@ -1006,6 +1009,7 @@ and you name the **film** on the command line:
 video-projects/<page>/                ← the channel: everything here is shared by its films
   data.csv      the queue: one row per film waiting to go out
   uploaded.csv  the ledger: every booked film and its slot
+  schedule.json the page's posting hours — the four slots below
   *.xlsx        the page's workbooks
   <film>/       meta.json, renders/, audio/, compositions/, stills/, plan/, qa/
 ```
@@ -1100,14 +1104,27 @@ what let `schedule` find the workbook rows.
 
 ### Slots
 
-The image page's cadence, kept: the first film goes **60–120 minutes** from now when the ledger is
-empty, otherwise **4–5 hours** after the project's last booked slot. Following films are another
-4–5 hours, never under 4. `--start-at` books an absolute first slot, `--start-delay N` a fixed
-number of minutes from now, `--interval N` a fixed gap — use these when a time is asked for.
-Without them the gaps are randomised on purpose: the same minute every day reads as a bot.
+**The page posts four times a day, and the hours are the page's own wall clock.** They live in
+`video-projects/<page>/schedule.json`:
 
-The last slot comes from that project's `uploaded.csv`; the API is asked only when the ledger is
-empty, so one project's schedule never depends on another's.
+```json
+{"times": ["07:00", "13:00", "19:00", "01:00"], "tz": "Asia/Dhaka", "lead_min": 15}
+```
+
+`01:00` belongs to the night that started at `19:00`, so the day runs `01:00`, `07:00`, `13:00`,
+`19:00` and the four slots are chronological. Vague ask — "schedule the next one" — means:
+`python3 tools/scheduler.py video-projects/<page>`, which books the **next free slot on that grid**
+and skips any slot already in `uploaded.csv`. Nothing is booked inside `lead_min` (15 minutes) of
+now, because the upload itself takes a moment.
+
+Override for one run when a time is asked for: `--daily "09:30,21:30"` (same local clock),
+`--tz Asia/Tokyo` for another zone, `--lead 5`, `--start-at <ISO>` for an exact instant,
+`--interval N` for a fixed gap that ignores the grid, `--limit N` for only the first N films. A
+page with no `schedule.json` keeps the old random cadence (60–120 minutes out, then 4–5 hours,
+never under 4) so the same minute never repeats every day.
+
+The last slot comes from that page's `uploaded.csv`; the API is asked only when the ledger is
+empty, so one page's schedule never depends on another's.
 
 ### The workbooks
 
@@ -1304,7 +1321,8 @@ folders), `tools/` and `node_modules/`.
 
 A film that will post itself needs only its `social` block in `meta.json` — or none at all, since
 the page's `data.csv` and `uploaded.csv` are created on first use in the page folder above it. Workbooks are found in the film folder or the page folder, whichever has them;
-keep them at the page level.
+keep them at the page level. The posting hours are page-level too (`schedule.json`): one grid per
+channel, and a new page gets its own.
 
 Making one film a day on demand is the anti-pattern. A batch of ten is one session of work and
 ten days of posts, and it is what keeps the list honest.
@@ -1399,6 +1417,7 @@ are deleted, not left half-built.
 | `Vintage-Motor-House-Car-List-300.xlsx` | the 312 cars to draw from, with `Used?` and what was done |
 | `Vintage-Motor-House-Tracker.xlsx` | one row per post: car, angle, score, views, Star |
 | `backup/` | the workbooks as they were before each edit |
+| `schedule.json` | the page's posting hours: the four daily slots and the zone they are in |
 | `data.csv` | the queue: one row per finished film — caption, `video`, fingerprint, status |
 | `uploaded.csv` | the ledger: every booked film, its slot, post id and post URL |
 | `<film>/` | a film folder, below |

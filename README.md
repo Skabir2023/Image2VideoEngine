@@ -131,8 +131,9 @@ command and gate spelled out.
    runs first (`tools/caption.py`), so a thin caption is refused; a passing one puts one row in
    `data.csv`, pointing at the render where it lies.
 7. **Publish it, after a yes.** `python3 tools/scheduler.py video-projects/vintage-motor-house
-   --dry-run` shows the slots; the same command without `--dry-run` uploads, books them, moves those
-   rows to `uploaded.csv` and marks both workbooks. One scheduler, for you and for the AI.
+   --dry-run` shows the slots — the next free one of your four hours (7 am, 1 pm, 7 pm, 1 am); the
+   same command without `--dry-run` uploads, books them, moves those rows to `uploaded.csv` and
+   marks both workbooks. One scheduler, for you and for the AI.
 8. **Sync and measure.** `sync` brings back the post URL and the date; fill views at 48 h and 7
    days, `Star?` at 50,000+. Then send the file with one line on what changed and tidy the drafts.
 
@@ -203,14 +204,24 @@ python3 tools/scheduler.py video-projects/<page>            # upload and book th
 python3 tools/publish.py sync video-projects/<page>/<film>                 # get the post URL
 ```
 
-**`tools/scheduler.py` is the scheduler.** Point it at the page and it books everything queued
-there, one film every 4–5 hours; point it at one film and it does just that film. The knobs are
-`--limit 3`, `--interval 60` (a fixed hour between slots), `--start-at 2026-11-17T09:00:00Z`,
-`--start-delay 90`. Ask the AI to schedule and it runs this same file — it has no reason to write a
-new script for a batch, and one written for a batch should not be trusted.
+**`tools/scheduler.py` is the scheduler, and the page has four hours a day: 7:00 am, 1:00 pm,
+7:00 pm and 1:00 am.** They are in your local time and live in
+`video-projects/vintage-motor-house/schedule.json`, so asking for a schedule needs no flags:
+
+```bash
+python3 tools/scheduler.py video-projects/vintage-motor-house --dry-run   # the next slots
+python3 tools/scheduler.py video-projects/vintage-motor-house             # book them
+```
+
+It takes the **next free one** of those four, then the one after that for the next film, and it
+never hands out a slot that `uploaded.csv` already holds — so four films go out 7 am, 1 pm, 7 pm
+and 1 am across two days. Nothing is booked within 15 minutes of now, because the upload takes a
+moment. For a one-off time: `--daily "09:30,21:30"`, `--tz`, `--lead 5`, `--start-at <ISO>`,
+`--interval 60`, `--limit 3`. Ask the AI to schedule and it runs this same file — no new script
+per batch, and one written for a batch should not be trusted.
 
 `queue` writes the caption and the film's address as one row. `schedule` uploads it from where it
-lies, books a slot (the first 1–2 hours out, then one every 4–5 hours), and moves the **row** from
+lies, books the next free hour of that grid, and moves the **row** from
 `data.csv` to `uploaded.csv` — the film never moves — then marks both workbooks: `Used? = Yes`
 with angle and date in the Car List, `Posted` in the Tracker. `sync` reads the post back and fills
 in the URL once it is live.

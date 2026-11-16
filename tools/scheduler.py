@@ -14,9 +14,17 @@ The target may be:
   * a page folder  — books everything queued on that page, in data.csv order
   * a film folder  — the same page queue; the film only supplies the channel
 
-Every flag of `publish.py schedule` works here: `--limit N`, `--start-at ISO`,
-`--start-delay MIN`, `--start-min` / `--start-max`, `--gap-min` / `--gap-max`,
-`--interval MIN`, `--dry-run`, `--no-excel`.
+The page's posting hours live in `video-projects/<page>/schedule.json`:
+
+    {"times": ["07:00", "13:00", "19:00", "01:00"], "tz": "Asia/Dhaka", "lead_min": 15}
+
+so plain `scheduler.py <page>` books the next free one of those and nothing else — no flags to
+remember, no script to write. Those times are the page's own wall clock and a booked slot is
+never handed out twice.
+
+Every flag of `publish.py schedule` works here: `--limit N`, `--daily "07:00,13:00"`, `--tz ZONE`,
+`--lead MIN`, `--start-at ISO`, `--start-delay MIN`, `--start-min` / `--start-max`,
+`--gap-min` / `--gap-max`, `--interval MIN`, `--dry-run`, `--no-excel`.
 
 Booking is a public, external action: run `--dry-run` first, and run it for real only after
 an explicit yes on those films.

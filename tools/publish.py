@@ -46,10 +46,15 @@ costs more than a house. Would you take it over a Hemi Cuda?" \
     python3 tools/publish.py schedule video-projects/vintage-motor-house/1969-ford-mustang-boss-429
     python3 tools/publish.py sync video-projects/vintage-motor-house/1969-ford-mustang-boss-429
 
-Slots: the first film goes out 60-120 minutes from now (or 4-5 hours after the
-page's last booked slot), and each following film is 4-5 hours after the one
-before, which is the cadence the image engine uses. `--interval` overrides the
-gap with a fixed number of minutes; `--start-at` books an absolute first slot.
+Slots: a page that posts at set hours keeps them in `video-projects/<page>/schedule.json`
+
+    {"times": ["07:00", "13:00", "19:00", "01:00"], "tz": "Asia/Dhaka", "lead_min": 15}
+
+and `schedule` books the next free one, then the one after that for the next film — a booked
+slot is never handed out twice, and nothing lands inside the lead time. Without that file the
+old cadence applies: 60-120 minutes from now (or 4-5 hours after the page's last booked slot),
+then 4-5 hours per film. `--daily` and `--tz` set the grid from the command line; `--interval`
+and `--start-at` override it with a fixed gap or an absolute first slot.
 
 Re-running is safe: a row whose film is already uploaded resumes at its post
 instead of uploading twice, and a row already booked is never touched.
@@ -68,6 +73,7 @@ import sys
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import brightbean  # noqa: E402
@@ -431,10 +437,105 @@ def next_slot(when: datetime, interval, gap_min, gap_max) -> datetime:
     return when + timedelta(minutes=gap)
 
 
+# -- the page's daily grid ------------------------------------------------
+# A page that posts at set hours keeps them in `video-projects/<page>/schedule.json`:
+#
+#     {"times": ["07:00", "13:00", "19:00", "01:00"], "tz": "Asia/Dhaka", "lead_min": 15}
+#
+# The times are the page's own wall clock, so 01:00 after 19:00 is the next morning and the
+# order is chronological: four posts a day, every day. Nothing here reads the file; `schedule`
+# passes the grid in, which keeps the CSV/API behaviour identical to the random cadence.
+DEFAULT_LEAD_MIN = 15
+GRID_CONFIG = "schedule.json"
+
+
+def local_zone() -> str:
+    """The machine's zone name — 'my times' means the clock on this computer."""
+    name = (os.environ.get("TZ") or "").strip()
+    if name:
+        return name
+    try:
+        name = Path("/etc/timezone").read_text(encoding="utf-8").strip()
+        if name:
+            return name
+    except OSError:
+        pass
+    link = Path("/etc/localtime")
+    if link.is_symlink():
+        target = os.readlink(link)
+        if "zoneinfo/" in target:
+            return target.split("zoneinfo/", 1)[1]
+    return "UTC"
+
+
+def parse_grid(value) -> list[tuple[int, int]]:
+    """`"07:00,13:00,19:00,01:00"` (or a list of those) as (hour, minute) pairs."""
+    raw = value if isinstance(value, (list, tuple)) else str(value).replace(";", ",").split(",")
+    times = []
+    for part in raw:
+        text = str(part).strip()
+        if not text:
+            continue
+        bits = text.split(":")
+        try:
+            hour, minute = int(bits[0]), int(bits[1]) if len(bits) > 1 else 0
+        except (IndexError, ValueError):
+            raise SystemExit("--daily wants times like \"07:00,13:00,19:00,01:00\", not %r" % text)
+        if not (0 <= hour <= 23 and 0 <= minute <= 59):
+            raise SystemExit("--daily: %r is not a time of day" % text)
+        times.append((hour, minute))
+    if not times:
+        raise SystemExit("--daily needs at least one time")
+    return sorted(set(times))
+
+
+def resolve_zone(zone: str):
+    """The page's zone as a real ZoneInfo, or a clear refusal naming the bad value."""
+    try:
+        return ZoneInfo(zone)
+    except Exception:  # noqa: BLE001 - zoneinfo raises ZoneInfoNotFoundError
+        raise SystemExit("unknown timezone %r — pass --tz with an IANA name like Asia/Dhaka"
+                         % zone)
+
+
+def daily_slots(times, zone: str, start: datetime, taken=()):
+    """Every one of the page's hours, in order, from `start` (UTC) onward.
+
+    Wall-clock times are built in `zone` day by day, so a DST change moves the UTC instant
+    rather than the page's posting hour. `taken` are slots already booked.
+    """
+    local = resolve_zone(zone)
+    day = start.astimezone(local).date()
+    booked = set(taken)
+    for _ in range(4000):
+        for hour, minute in sorted(set(times)):
+            slot = datetime(day.year, day.month, day.day, hour, minute, tzinfo=local)
+            instant = slot.astimezone(timezone.utc)
+            if instant >= start and instant not in booked:
+                yield instant
+        day += timedelta(days=1)
+
+
+def load_grid(project: "Project"):
+    """The page's posting hours, or None when its `schedule.json` is absent or empty."""
+    path = project.page / GRID_CONFIG
+    if not path.is_file():
+        return None
+    try:
+        spec = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise SystemExit("%s is not valid JSON: %s" % (path, error))
+    if not isinstance(spec, dict) or not spec.get("times"):
+        return None
+    return {"times": parse_grid(spec["times"]),
+            "tz": spec.get("tz") or local_zone(),
+            "lead_min": int(spec.get("lead_min", DEFAULT_LEAD_MIN))}
+
+
 # -- schedule ------------------------------------------------------------
 def schedule(project: Project, limit=None, start_at=None, start_delay=None,
              start_min=60, start_max=120, gap_min=240, gap_max=300, interval=None,
-             dry_run=False, excel=True) -> tuple[int, int]:
+             dry_run=False, excel=True, daily=None, tz=None, lead_min=None) -> tuple[int, int]:
     project.ensure()
     key = brightbean.get_key()
     account = brightbean.resolve_account(key, project.account)
@@ -453,16 +554,59 @@ def schedule(project: Project, limit=None, start_at=None, start_delay=None,
         print("data.csv has no films waiting.")
         return 0, 0
 
-    when, reason = first_slot(project, key, account_id, start_at, start_delay,
-                              start_min, start_max, gap_min, gap_max, interval)
-    print("first slot: %s UTC (%s)" % (when.strftime("%Y-%m-%d %H:%M"), reason))
-
     book = Workbooks(project) if excel else None
     _, booked_rows = read_rows(project.uploaded_csv)
     booked_shas = {r.get("video_sha") for r in booked_rows
                    if (r.get("video_sha") or "").strip()
                    and (r.get("status") or "") in ("scheduled", "publishing", "published")}
     done = failed = placed = 0
+
+    # Slots: the page's daily grid when it has one, the random cadence otherwise. Either way
+    # one slot is taken per film, and a slot already booked is never handed out again.
+    zone = tz or local_zone()
+    local = resolve_zone(zone)
+    when = None
+    slots = None
+    used = set()
+    if daily:
+        booked_slots = set()
+        for booked in booked_rows:
+            if (booked.get("status") or "") not in ("scheduled", "publishing", "published"):
+                continue
+            stamp = parse_utc(booked.get("scheduled_at")) or parse_utc(booked.get("published_at"))
+            if stamp:
+                booked_slots.add(stamp)
+        lead = DEFAULT_LEAD_MIN if lead_min is None else lead_min
+        floor = utcnow() + timedelta(minutes=lead)
+        last = project.last_booked() or brightbean.latest_booked(key, account_id)
+        if last and last >= floor:
+            floor = last + timedelta(seconds=1)
+        slots = daily_slots(daily, zone, floor, booked_slots)
+        print("grid: %s %s — nothing inside %d min, booked slots skipped" % (
+            ", ".join("%02d:%02d" % t for t in sorted(set(daily))), zone, lead))
+    else:
+        when, reason = first_slot(project, key, account_id, start_at, start_delay,
+                                  start_min, start_max, gap_min, gap_max, interval)
+        print("first slot: %s UTC (%s)" % (when.strftime("%Y-%m-%d %H:%M"), reason))
+
+    def stamp_of(slot: datetime) -> str:
+        return "%s UTC (%s %s)" % (slot.strftime("%Y-%m-%d %H:%M"),
+                                   slot.astimezone(local).strftime("%H:%M"), zone)
+
+    def take_slot() -> datetime:
+        """The next slot this run may book: grid order, or the random cadence."""
+        nonlocal when
+        if slots is not None:
+            for candidate in slots:
+                if candidate in used:
+                    continue
+                used.add(candidate)
+                when = candidate
+                return candidate
+            raise SystemExit("the grid has no free slot in the next ten years — check --daily")
+        slot = next_slot(when, interval, gap_min, gap_max) if placed else when
+        when = slot
+        return slot
     for row in pending:
         path = Path(row["video"]) if row.get("video") else None
         caption = row.get("caption") or ""
@@ -486,11 +630,10 @@ def schedule(project: Project, limit=None, start_at=None, start_delay=None,
                 print("  SKIP %s: %s" % (label, message))
                 continue
 
-        slot = next_slot(when, interval, gap_min, gap_max) if placed else when
+        slot = take_slot()
         if dry_run:
-            print("  [dry] %s -> %s UTC" % (label, slot.strftime("%Y-%m-%d %H:%M")))
+            print("  [dry] %s -> %s" % (label, stamp_of(slot)))
             placed += 1
-            when = slot
             continue
 
         try:
@@ -531,16 +674,15 @@ def schedule(project: Project, limit=None, start_at=None, start_delay=None,
 
             if held is not None:
                 row["scheduled_at"] = iso(held)
-                if held > when:
+                used.add(held)          # the next film must not take this slot too
+                if when is None or held > when:
                     when = held
-                print("  already booked for %s UTC — keeping its slot"
-                      % held.strftime("%Y-%m-%d %H:%M"))
+                print("  already booked for %s — keeping its slot" % stamp_of(held))
             else:
                 brightbean.schedule_post(key, post_id, slot)
                 row["scheduled_at"] = iso(slot)
                 placed += 1
-                when = slot
-                print("  booked %s -> %s UTC" % (label, slot.strftime("%Y-%m-%d %H:%M")))
+                print("  booked %s -> %s" % (label, stamp_of(slot)))
 
             row["status"] = "scheduled"
             row["error"] = ""
@@ -762,6 +904,11 @@ def main() -> None:
     p_sched.add_argument("--gap-min", type=int, default=240)
     p_sched.add_argument("--gap-max", type=int, default=300)
     p_sched.add_argument("--interval", type=int, help="fixed minutes between slots")
+    p_sched.add_argument("--daily", help='the page\'s posting hours, e.g. "07:00,13:00,19:00,01:00" '
+                                          '(local wall clock; default: the page\'s schedule.json)')
+    p_sched.add_argument("--tz", help="IANA zone the --daily times are in (default: this machine)")
+    p_sched.add_argument("--lead", type=int, dest="lead_min",
+                         help="minutes of headroom before the next grid slot (default 15)")
     p_sched.add_argument("--dry-run", action="store_true", help="show the plan, change nothing")
     p_sched.add_argument("--no-excel", action="store_true", help="leave the workbooks alone")
 
@@ -783,9 +930,18 @@ def main() -> None:
               args.car, args.angle, args.caption_file, args.caption_score,
               args.force, args.score_parts)
     elif args.command == "schedule":
+        config = load_grid(project) or {}
+        # The page's own hours are the default; an explicit time or interval wins over them,
+        # because a one-off booking is a deliberate override, not a config error.
+        daily = parse_grid(args.daily) if args.daily else config.get("times")
+        if args.start_at or args.start_delay is not None or args.interval is not None:
+            daily = None
         done, failed = schedule(project, args.limit, args.start_at, args.start_delay,
                                 args.start_min, args.start_max, args.gap_min, args.gap_max,
-                                args.interval, args.dry_run, not args.no_excel)
+                                args.interval, args.dry_run, not args.no_excel,
+                                daily=daily, tz=args.tz or config.get("tz"),
+                                lead_min=args.lead_min if args.lead_min is not None
+                                else config.get("lead_min"))
         if failed:
             sys.exit(1)
     elif args.command == "sync":
