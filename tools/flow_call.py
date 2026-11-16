@@ -11,7 +11,8 @@ waited on and inspected from the engine without a chat client in the middle.
 
 `flow_status` returning `signedIn: true, inProject: false` means Flow is connected and simply has
 no project open — a state, not a missing installation. Open or create one in Flow's Chrome
-window (CDP 9333); a batch queued with no project lands nowhere. The route map is PROVIDERS.md.
+window (CDP 9333); a batch queued with no project lands nowhere. The route map is
+.agents/manual/04-the-two-brains.md.
 """
 from __future__ import annotations
 

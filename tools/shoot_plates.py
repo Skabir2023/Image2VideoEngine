@@ -16,7 +16,7 @@ at a time: send once, wait for *that* plate, download it, then send the next. A 
 re-sent because its image is late.
 
 It drives Browser MCP in the person's signed-in **default Chrome** (where the extension lives).
-A closed default window is reported as a closed window, not a missing install (PROVIDERS.md).
+A closed default window is reported as a closed window, not a missing install (.agents/manual/04-the-two-brains.md).
 `eval` only works on a selected tab, so the tool picks one meta.ai tab and keeps it for the whole
 shoot; commands are one line each
 and eval payloads are flattened for that reason. The image is fetched the way the page would

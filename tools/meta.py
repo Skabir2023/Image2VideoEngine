@@ -6,7 +6,7 @@ the person's real, already-signed-in **default Chrome** through its extension.
 Meta AI is the page doing the thinking, so there is no API key and nothing to
 pay for. The extension lives in the default profile; Flow's separate Chrome
 profile (CDP 9333) is not it. If Chrome is closed, `--check` says so — that is
-a closed window, not a missing install. See PROVIDERS.md.
+a closed window, not a missing install. See .agents/manual/04-the-two-brains.md.
 
 The plan work (scoring, fact-check, script, caption, image prompts) is text,
 not images: this driver fills Meta's composer, sends, and waits for the answer

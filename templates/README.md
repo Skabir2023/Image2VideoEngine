@@ -47,7 +47,7 @@ would leave a project that `render-all.sh` cannot render, because it has no `met
 
 **The structure is the template.** `tools/scene_builder.py` plus `assets/` is the engine; a film is
 only data. So a template here is the *shape of that data*, not a different look — the page's style
-is fixed on purpose (`AGENTS.md` → *Style of this engine*), and every reel has to be recognisable as
+is fixed on purpose (`.agents/manual/10-style.md`), and every reel has to be recognisable as
 coming from the same page.
 
 ## Adding a template

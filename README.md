@@ -88,7 +88,7 @@ That is 936 posts before one angle repeats: about 15 months at two a day.
 
 ## Make the next reel
 
-The order is fixed; `AGENTS.md` → *The working procedure* is the same eight steps with every
+The order is fixed; `.agents/manual/03-working-procedure.md` is the same eight steps with every
 command and gate spelled out.
 
 1. **Choose ten, then let Meta score them.** `pick` lists the next cars with `Used? = No`;
@@ -122,7 +122,8 @@ command and gate spelled out.
 
    Flow can also generate a **short video clip**, which costs credits (7–12 for a 4–8 s Omni clip,
    10–100 for Veo), so it needs a yes first — and no scene can play one yet: the films are built
-   from stills with camera moves, and the gate counts stills. See `AGENTS.md` → *4. Plates*.
+   from stills with camera moves, and the gate counts stills. See
+   `.agents/manual/03-working-procedure.md` → *4. Plates*.
 5. **Build, render, check.** `npm run render -- video-projects/vintage-motor-house/<car-slug>`,
    then lint, the frame scan, the loudness and the frames themselves — and name the file after
    its title (5–11 words) before anyone sees it.
@@ -137,8 +138,9 @@ command and gate spelled out.
 8. **Sync and measure.** `sync` brings back the post URL and the date; fill views at 48 h and 7
    days, `Star?` at 50,000+. Then send the file with one line on what changed and tidy the drafts.
 
-`AGENTS.md` has the exact timings, the sound law, the change-coupling table and the known
-traps. One folder holds one film; the engine is shared by all of them.
+`.agents/manual/` has the exact timings (`07-timing-law.md`), the sound law (`09-sound-law.md`),
+the change-coupling table (`16-changing-things.md`) and the known traps (`17-pitfalls.md`). One
+folder holds one film; the engine is shared by all of them.
 
 ## The two free brains
 
@@ -169,7 +171,7 @@ If it says browser-mcp has no browser connected, the default Chrome window is cl
 
 If Flow says `signedIn: true, inProject: false`, Flow is connected and simply has no project open
 — open or create one in Flow's Chrome window. Neither case is an install problem, and neither is
-a reason to use a paid API. The full explanation is in `PROVIDERS.md`.
+a reason to use a paid API. The full explanation is in `.agents/manual/04-the-two-brains.md`.
 
 ## Publish it
 
@@ -241,8 +243,8 @@ The engine:
 
 | Path | What it is |
 | --- | --- |
-| `AGENTS.md` | operating manual for an AI model working here |
-| `PROVIDERS.md` | browser-mcp (Meta AI) and flow-mcp (Google Flow): what is installed and how to read a closed window |
+| `AGENTS.md` | the manual's front door: the layout, the read order, the index of its sections |
+| `.agents/manual/` | the manual itself, one file per section (`03-working-procedure.md` …) |
 | `assets/*.js`, `assets/fonts/` | the drawing engine, GSAP and the local fonts |
 | `sound/kit.json` | the four sounds a reel uses, and the alternatives each story angle can pick |
 | `sound/engines/`, `sound/SFX Sound Effects/` | the library: engine recordings and one-shots for the closing hit |

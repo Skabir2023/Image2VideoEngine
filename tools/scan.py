@@ -1,12 +1,34 @@
 # Black-frame and one-frame-pop scan of a render.
 # Usage (from the engine root): python3 tools/scan.py video-projects/<page>/<film>/renders/<name> [...]
 import subprocess, numpy as np, sys, json
+
+USAGE = """usage: python3 tools/scan.py <render> [<render> ...]
+
+Scans each finished MP4 for a blank first frame, black frames, one-frame pops and
+hard jumps, and prints one JSON line per file. `.mp4` is added when it is left off.
+
+  python3 tools/scan.py video-projects/<page>/<film>/renders/<name>.mp4"""
+
+
 def frames(path, w=240, h=135):
     raw = subprocess.run(['ffmpeg','-v','error','-i',path,'-vf',f'scale={w}:{h},format=gray','-f','rawvideo','-'],capture_output=True).stdout
     return np.frombuffer(raw,np.uint8).reshape(-1,h,w).astype(np.float32)
-for name in sys.argv[1:]:
+
+
+args = sys.argv[1:]
+if not args or any(a in ('-h', '--help') for a in args):
+    print(USAGE)
+    sys.exit(0 if args else 2)
+
+for name in args:
     path = name if name.endswith('.mp4') else f'{name}.mp4'
-    f = frames(path); n = len(f)
+    try:
+        f = frames(path)
+    except Exception:
+        f = None
+    if f is None or len(f) == 0:
+        sys.exit(f'scan: cannot read {path} — no frames decoded')
+    n = len(f)
     d = np.abs(np.diff(f,axis=0)).mean(axis=(1,2)); mean = f.mean(axis=(1,2))
     f0 = f[0]; blank = f0.std() < 6
     jumps = [(i+1, round(float(v),1)) for i,v in enumerate(d) if v > 18]
